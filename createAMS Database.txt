@@ -1,0 +1,14 @@
+* Create AMS DB
+DROP DATABASE IF EXISTS emlplatform;
+create database emlplatform;
+DROP DATABASE IF EXISTS emltest;
+create database emltest;
+grant all privileges on *.* to root@'%' identified by 'mysql'; 
+grant all privileges on *.* to amsadminusr@'%' identified by 'mysql';
+grant all privileges on *.* to root@'server9240' identified by 'mysql'; 
+grant all privileges on *.* to amsadminusr@'server9240' identified by 'mysql';
+
+
+grant all privileges on emltest.* to root@'%' identified by 'mysql';
+grant all privileges on . to root@'%' identified by 'mysql';
+grant all on . to amsadminusr@'%' identified by 'mysql';

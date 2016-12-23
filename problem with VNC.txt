@@ -1,0 +1,10 @@
+Doi voi phim s:
+	org->gnome->desktop->wm->keybindings tim den panel-main-menu va switch-applications gan gia tri la []
+
+	Doi voi phim d:
+	org->gnome->desktop->wm->keybindings tim den show-desktop gan gia tri la []
+
+
+vnc4server -kill :1
+
+vnc4server :1

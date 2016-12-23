@@ -1,0 +1,7 @@
+http://tiger.in.alcatel-lucent.com:9999/nexus/#view-repositories
+
+go to: 3rd party/ ams/com/alcatel/axs/gui/doc/spfe
+upload file spfe-9.5.95-1.zip
+trunk/globalproperties/pom.xml
+-> edit <com.alcatel.axs.gui.doc.spfe>9.5.95-1</com.alcatel.axs.gui.doc.spfe>
+

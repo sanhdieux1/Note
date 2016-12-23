@@ -1,0 +1,307 @@
+﻿setup server co 2 loai: single vs cluster
+-single thi chi 1 cai serve
+-cluster thi co nhiu server
+
+service la template da duoc configure trong APC
+configure la di tao cac object (port, card, hsi service) tren NE
+
+----------*******------------
+template no co argument va parameter
+goi chung 2 thang do la attribute
+trong APC minh
+sau do nhung attribute dc APC PLUG 
+no mapping qua NE OBJECT
+thi tren NE minh goi attribute thui
+ma attribute thi no co 2 loai
+1 la non-modifiable and modifiable
+----------*******------------
+
+start server ams-> build ams NE (basic.gpon +  basic.g6) -> build apc server depend-> apc plugs 
+ 
+note*: khi nao trong apc dung plugs nao -> thi ams cung phai co plugs do
+
+**login TPC: tpc-sslvpn-apac.alcatel-lucent.com/
+
+chi co server ms su dung mvn eclipse:eclipse de builf
+
+--> build APC Server:
+	apc.app\apc.app.fwk\server\jbossdeploy
+--> deploy server APC
+	script ./deploy
+
+	or dung script nePlugDeploy de deploy ams core:
+		bash ./nePlugDeploy.sh gpon 4.10
+		bash ./nePlugDeploy.sh g6 12.3
+
+check web server : ipserver:8080/apc
+
+**create NE:
+
+- find NE: http://avatar.in.alcatel-lucent.com:8090/
+	+ g6 thi tao profile la public/private
+	+ profile cho isam thi co 2 loai isam: isam pon, isam khac
+	+ gpon thi tao profile la public/NETMAN
+	** chu y: route 44.44.44.0/16 -> 192.168.92.183
+->>> create xong roi supervision/start no len
+
+- tao simulator NE: \\192.168.72.21\Share\list_simulator
+**huong dan su dung:
+
+-xai gpon :enable het may cai setting trong apc web --> start lai server -->import template 10M10M
+-dung isam: import cai ONT template
+**NE TYPE**
+	Rack type: ALTR-E
+	Sub-rack type: NFXS-E
+	--------------------------------------------
+	-> To create PON PORT: right click on slot LTx > Action >Plan > select Plan type NGLT-A
+	-> To create XDSL Port: right click on slot LTx > Action >Plan > select Plan type NDLT-F, NDLS-A
+	-> Ethernet : FELT-B
+**NE khong the ping:
+	TH1: do router co van de: co 2 router : 192.168.95.100 va 192.168.95.177
+		- xem router dang su dung: netstat -nr
+		- xoa router : route delete -net [IP route]/[net] gw [geteway]
+		- add router : route add -net [IP route]/[net] gw [geteway]
+			ex: route delete -net 135.249.0.0/16 gw 192.168.95.100
+			route add -net 135.249.0.0/16 gw 192.168.92.177
+	TH2: do NE tren server -> tim NE khac
+	---> supervision/Reachability Test/Regular
+
+** Configure bind template:
+	- Tao Link giua G6 va GPON
+		+ GPON Network port: find -> Ethernet Port
+		+ G6 ANM Port : find -> GbE Port
+		+ VLAN ID : find on G6
+	
+	- Config (Apply Bind Template):
+		+ G6 CPE co 2 mode: GR 3030 vs TR08 -> find group tuong ung 
+		 *node: de biet tyle G6, vao template 'G6 H248 LINE VZ_LINE_GR303' tim attribute 'Signaling E1 Type'
+				Tim group: G6 -> Infrastructure -> GR303/TR08 interface Group
+				những dấu + sẽ tự generate
+		
+		+ CRV Number < max Nb of CRVs(find on G6)
+
+		+ Link Aggregation Group: -> Slot NTB -> LAG -> create
+** External: dau tien se vao day
+-> vao Ete 
+	neu co Connection la xu ly tren NE va database
+	StrictConnectionmgrDecorator.java
+	ConnectionMgr.java
+
+** relocal :
+	axs/trunk$ svn relocate http://192.168.95.80/svn/axs http://tiger.in.alcatel-lucent.com/svn/axs
+
+Sonar server address for safecommit is updated from http://avatar.in.alcatel-lucent.com:8060 to http://bamboo.in.alcatel-lucent.com:9000 at revision 293902. 
+
+** maximum session: UPDATE `emlplatform`.`User` SET `maxConcurrentSessions`='1000' WHERE `id`='1';
+
+** build plugin basic plugin -> idm plugin -> apc plugin -> spfe plugin.
+ build basic plugin -> eclipse ui
+ 
+ 
+ **path API of APC: basic.app\package\target\ams-9.5.95.00-SNAPSHOT\server\wildfly-8.2.1.Final\modules\com\alcatel\axs
+ 
+ **Class in APC
+ - Message : read properties file
+ - SPFEPopupMenu : 
+ - ApcManagementImpl
+ - ServerLink: user JMX get ApcManagementImpl
+ - ApcRequestProcessor : Apc Core, handle 
+ - ApcUtility.getInstance().getApcTemplateVO(serviceData, null, true): conver ServiceData to ApcTemplateVO
+ - MObjectRegistration : APC setting GUI spfe
+ - ApcUtility : setting APC
+ - ApcServiceView: 
+    + selectionChanged() : handle when click on tree 
+	+ fillTable(): handle loadApcServiceData
+ - Activator.getImage("icons/apc_AXS_16.png")
+ 
+ 
+public static final String APC_SERVER_SHOW_ON_CLICK = "apc.server.showOnClick"; 
+
+- Log safecommit: apc.app\apc.app.fwk\components\apc-core\jar\target\surefire-reports 
+
+*****HTML*****
+1 APC page gom nhiu component
+moi component no co 1 method
+	addToDom -> build DOM tree
+XslSnippet DOM + XSLT -> HTML
+no se vao cai class nay de DOM + XSLT => HTMl
+
+components/kff/src/main/java/com/alcatel/html/table
+components/apc-core/src/main/java/com/alcatel/apc/core/impl/ConnectionTemplateDao.java
+PageSevlet
+-css: components/kff/src/main/web/css
+
+2. Bulk execution monitoring
+- excute file: RequestListPage -> executeLegacy()
+MenuSnippet : menu WEb gui, navbar navbar-alu navbar-fixed-top
+HttpPage: body-content
+
+****************SOAP********************
+ApcRemoteImpl
+
+	**use notify client**
+	read doc: Configuring the 5529 APC to Send New ONT Notifications.doc
+				http://tiger.in.alcatel-lucent.com:8090/display/APC/APC+Notification+Client
+				
+	checkout: http://192.168.95.80/svn/axs/tools/trunk/apc.tools/apcNotificationClient
+	build: mvn clean install
+	untar: apc-notification-client-1.0.tar
+
+*************Class handle:
+		- Action.java : ApcBulkCommandJobExecutorService -> getAdditionalInfo() 
+
+		- module on jboss: generic.package\product
+***************SPFE********************
+****Apply template****
+SPFEPopupMenu > CreateActionVZ > ConfigureTemplateWizardVZ > ConfigureTemplatePage
+	ServiceControlComposite
+	fillDataToComposite: handle to load data into composite
+		m_resourceGroup: Resource composite;
+			GponPlugin > new GponResourceSelection ->> Composite
+	handle template change: fillArgumentComposite()
+	
+***Apply Bind Template***
+enable setting web gui: Cpename special format support: *
+
+* AMS Client on window:
+ipserver:8080/ams-client/
+
+**Get MobjectID**
+SpfePlugin
+
+delete db:
+component=core,service=NodeStartUp  -> reset(true)
+
+**find out class**
+add plugin: org.eclipse.pde
+
+
+***To find out address will be configured****
+Go to Plug -> apc.app\plugins\apc.app.plugins.isam.5.5\server\src\main\resources\ApcNeConfiguration.xml
+find : <resultantAddressPattern>
+
+**share template**
+
+
+HSI failed:
+
+Port Name,Status,Error
+GPON49:1-1-11-2-1,Failed,Generic configuration error: APC configure operation failed
+,," Could not configure the complete configuration, did a successful rollback"
+,, Could not configure G7342 HSI Service on 1-1-11-2-1-2-1
+,, Configuration of Following Configurator Failed: Hsi Service ... Rollback Succeeded
+,, General error: Clashing Pbits entered on UNI; General error: unexpected condition; General error: ponMgr.getOntHsiService() failed; Invalid Value: illegal parameter;
+
+=>> on Tree/ Infrastructure/ Transmission / GPON /Priority Queue profile
+
+
+
+	
+*** AMS Action magager ***
+
+1/ If the submitted job has the same "target", same "type-family" and same "type-name" as a job that is 
+already in the Job Target Queues, then it replaces the one already in the queue (we indeed assume that 
+it has more accurate parameters than the existing one). Just to be crystal clear:
+·  if the already existing job is "pending", i.e. in the queue and its execution has not started yet, then 
+the job is replaced by the new one
+·  if the already existing job is "in progress", i.e. being currently executed, then the new job is simply 
+discarded  
+
+***install server production***
+1. Copy build: \\192.168.72.21\build into ams_build\<revision>
+	copy plugin: plugin-combo-gpon.xxx.bin, app-apc-xxx...bin, app-spfe-xxx...bin
+	
+2. Install iptables: 
+	copy iptables into -> /etc/sysconfig/iptables
+	service iptables start
+3. Install ams server:
+	./ams-9.4.90.00-272880-redhat-x86_64.bin --activate-force
+	ERROR: There is no active AMS version. First activate the previous installation
+		=> uninstall all ams.
+	jdk path: /usr/lib/jvm/java-1.8.0-openjdk (default)
+note: uninstall build old:
+	a. /otp/ams/sofware/ams-9.x.xx-<revision>/bin/./ams_server status
+	b. /otp/ams/sofware/ams-9.x.xx-<revision>/bin/./ams_install.sh
+		choice: u
+		choice: 0
+		choice: x
+		choice: q
+	c. /otp/ams/sofware/ams-9.x.xx-<revision>/bin/./ams_uninstall
+Note: uninstall plugin:
+	/opt/ams/software/ams-9.5.95.00-320812/bin/ams_install.sh
+note: In which top directory do you want to put the database storage ? ---> /mnt/test
+	- find folfer: df -h -> find "/dev/mapper/vg-lv"
+4. Active ams server:
+	/otp/ams/sofware/ams-9.x.xx-<revision>/bin/./ams_activate.sh
+5. Start ams server:
+	/otp/ams/sofware/ams-9.x.xx-<revision>/bin/./ams_server start
+	
+Note*: Server log: \var\opt\ams\local\ams-9.4.90.00-272880\traces\debug
+		AMS client log: C:\Users\ptttrang\5520AMS\9.6\workspace\.metadata 	
+6. Install plugin:
+	/otp/ams/sofware/ams-9.x.xx-<revision>/bin/./ams_install.sh
+	choice: i
+	enter folder contain plugin
+	choice: number of plugin or 0 to select All
+	choice: x
+
+***Operation***
+1. Audit
+Class: EquipmentAddressConfigurator
+2. SchedulePortCommand
+	ScheduleCommand
+3. execute nbi
+	BulkPortCommand
+		doExecute()
+	-Time execute : 60s: BulkCommandExecutionController, ApcBulkCommandJobExecutorService
+***Enable Debug mode ***
+	http://<ip-server>:8080/jmx-console/
+	find: 
+		logger=com.alcatel.apc,subsystem=logging
+		logger=com.alcatel.ni,subsystem=logging
+	changeLogLevel() -> DEBUG
+	Invoke
+***Enable Debug mode server produce ****
+
+	1. cd  \opt\ams\software\ams-9.6.90.00-339006\server\wildfly-8.2.1.Final\bin\
+	2. vi standalone.conf => enable debug mode
+	**add port to firewall
+	3.
+	iptables -L -n
+	iptables -I INPUT -p tcp --dport 8787 -j ACCEPT 
+	#A INPUT -p tcp -m tcp --dport 8787 -j ACCEPT
+	#ams_updatefirewall --debug 
+	service iptables save
+	service iptables restart 
+
+4. Deploy/StartUp apc:
+	NodeStartup.java
+***Noi set Password***
+In templateMetaData -> BasicConnectionTemplate -> getArgumentMetaDataDetailsInternal -> UpdateArgumentsMetaData
+
+***Query ticket***
+
+project in (CONV, APC) AND issuetype = Bug AND "Implementation Authority" in ("Chung THANH DAO")  AND assignee =tducle ORDER BY assignee DESC, fixVersion ASC, status DESC, priority DESC
+http://avatar.in.alcatel-lucent.com:8060
+
+****************** Change version AXS: 
+	globalproperties/pom.xml -> <version>, <com.alcatel.axs.release>, <com.alcatel.axs.corerelease>,
+	setup/pom -> <version>
+	setup/top-pom/pom -> <version>
+				
+************** Check license APC *************
+1. NBI user/password : LoggingDatabaseServerLoginModule 
+2. NBI license permission details operation : LicenseApcRemoteDecorator
+
+***********Migrate*********
+ApcMigrationController
+-> to view current version.-> SELECT * FROM DbMeta
+
+**********Alarm**********
+go to Apc Setting : Enable Node Notification Processing: true
+
+Set Latency: Web setting -> PreConfiguration -> Latency
+
+*******Automation******
+import : basic.app/automation/axs-automation-test, basic.app/automation/axs-automation-api
+add argument: - automation 192.168.92.40:6220 into amsclient

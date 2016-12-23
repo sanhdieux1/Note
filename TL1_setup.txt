@@ -1,0 +1,31 @@
+Step1:
+Build ansitl1.app
+Build plug fwk, ref plug
+Step2:
+Deploy ref plug (plugins)
+Deploy server tl1 same with spfe
+import axs-ansitl1-apc-client -> eclipse
+Step3:
+Go to apc GUI to create user tl1user
+enable setting  TL1 adapter support: *
+Step4:
+AMS GUI/User/Advanced ==>add filter:0.0.0.0/0
+AMS GUI/Alarm/TL1 GW setting: add tl1user
+Step5:
+in NE/TL1 add
+SUPERUSER
+pass:ANS#150
+Tl1 session: enabled
+Step6:
+telnet 192.168.92.40 4713
+#login into Tl1 session
+act-user:ams:admin:::admin1;
+and type command
+For example:ENT-SRVC-POTS:GPON49:ONTPOTS-1-1-5-4-1-2-1:1111::GSFU_POTS:ONTTYPE=GSFU,SUBSLOCID=phuc2,TN=2222222223,IG=50,igtype=303,CRV=557,SVLAN=100,
+LABEL=TL1SrvcLabel:IS;
+
+ENT-SRVC-LAN:135.249.41.15:ONTENET-1-1-2-1-6-3-1:9009::7360_300M_300M_SFU:ONTTYPE=GSFU,VLANFIXMAP=Dual,PORTID=1,LABEL=DVport6,PAEPORTSTATE=ENABLED,CKTID=OrangeDV6,LAGID=LAG-10:IS; 
+
+note*: Only with NE type: FANT-F
+
+RTRV-SRVC-LAN:ISAM44:ONTENET-1-1-1-1-1-1-1;

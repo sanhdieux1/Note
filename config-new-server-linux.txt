@@ -1,0 +1,298 @@
+--Step config server linux
+=========================================
+<DO ONLY WHEN SETUP NEW LINUX SERVER>
+- Create users
+- Config Samba
+	vi /etc/samba/smb.conf
+- Start VNC
+	+ Modify file /.vnc/xstartup (there is a sample file in Windows PC)
+	+ Start VNC: vnc4server :1 -geometry 1280x930
+- Config Maven
+	+ Extract maven in /soft
+	+ Create /.m2 folder in HOME
+	+ Copy sample settings.xml file to /.m2 folder
+	+ Config host to build sonar in safecommits tool <nonProxyHosts>avatar.in.alcatel-lucent.com|172.21.132.8|localhost|127.0.0.1</nonProxyHosts>
+- Config SVN
+	+ Extract svn in /soft
+	+ Copy .bashrc sample in /script (.bashrc for trunk)
+	+ Change /.subversion/servers file => add proxy
+		[groups]
+		group1 = *.alcatel-lucent.*		---> pattern for tiger server
+		### Information for the first group:
+		[group1]
+		http-proxy-host = 192.168.92.93	---> Windows IP address
+		http-proxy-port = 1704	---> EzProxy port
+		
+	+ SVN unkown host: add host (Window and Linux)
+		127.0.1.146 tiger.in.alcatel-lucent.com
+		172.21.132.9 bamboo.in.alcatel-lucent.com
+		127.0.2.33 hoffman.pet.usa.alcatel.com
+		172.21.132.8 avatar.in.alcatel-lucent.com
+		172.21.132.88 fastsnapshot.in.alcatel-lucent.com
+		127.0.1.146 tiger.in.alcatel-lucent.com
+		
+- Config jdk
+	+ Extract jdk in /soft
+
+- Setup MySQL -> 	<!-- lam theo huong dan mariadb -->
+	+ Install Database: (step by step)
+		mysql_install_db --user=pdkhoa --basedir=$MYSQL_HOME --datadir=$MYSQL_DATA_DIR
+	+ Start MySQL:
+		mysqld_safe --skip-name-resolve --basedir=$MYSQL_HOME --ledir=$MYSQL_HOME/bin --datadir=$MYSQL_DATA_DIR --pid-file=$MYSQL_HOME/localhost.localdomain.pid --socket=$MYSQL_HOME/mysql.sock --bind-address=$NMHN_USER_IPADDR --port=3306 --no-defaults&
+		
+		===> plus innoDB if needed
+		
+		>> If cannot start to DB:
+				-- su root	
+				-- chown -R tvhoa /var/log/mysqld.log
+				-- startdb.sh
+	
+- Checkout code	
+
+- Config SSH
+
+==============================================
+<DO ONLY WHEN CHECKOUT NEW TRUNK COLLECTOR OR OLDER RELEASE COLLECTORS>
+	- change generic.package/product => change POM file from production to development
+	- \axs\<TRUNK_DIR>\generic.package\product\src\main\deploy\mysql-ds.xml change ams DB name
+		==> [if you do this after build trunk] build generic.package, build server
+	 
+  [for trunk that older than 9.2.30]
+  - \axs\<TRUNK_DIR>\apc.app\apc.app.fwk\server\jbossdeploy\pom.xml change apc DB name, change ip from localhost -> 192.168.95.39
+		==> [if you do this after build apc] build jbossdeploy
+	
+==============================================
+<DO WHENEVER UPDATE TRUNK>
+- build trunk:  (revert axsclient.product if it was changed) (path: generic.package/product)
+
+	modify <environment.type>production</environment.type> to <environment.type>development</environment.type>
+
+	+ edit file POM to comment out unused components
+	+ go to trunk directory and run mvn clean install -Dtest
+- go to taskcenter/webapp. Remove ...
+remove automation eclipseui/plugins.
+	
+- build server: basic.app/package run command: mvn -Danttarget=confjboss-full clean install.
+
+- build and deploy NE (plug core): gpon, isam, (build which NE plug that you need to use only)
+  e.g.
+	+ gpon 4.9: go to /trunk/basic.gpon.4.9, run mvn clean install -Dtest
+	+ isam 5.2: go to /trunk/basic.isam.5.2, run mvn clean install -Dtest
+	copy all mobject file to deployment.
+
+- build and deploy apc: go to apc.app and run mvn clean install -Dtest
+	+ If build apc UT fail, stop build: -DfailIfNoTests=false
+	+ run script: bash deploy.sh for apc.app/apc.app.fwk/server/jboss-deploy/ 
+
+- build apc plugins: go to apc.app/plugins/ and run mvn clean install -Dtest
+
+- build APC server: 
+	+ cd to apc.app/apc.app.fwk/server/jboss-deploy/ and run mvn clean install -Dtest
+	+ edit pom.xml file if needed(add/remove apc plug).
+- build and deploy spfe: go to spfe.app/spfe.app.fwk run mvn clean install -Dtest and run mvn eclipse:eclipse
+	+ build SPFE plugin, cd spfe.app/plugin and run mvn clean install -Dtest 	
+	+ go to trunk: run ./scripts/runjboss --full spfe.app/spfe.app.fwk/server/axs-spfe-app-deployment
+---------------------------
+- MYSQL:
+	+ DROP DATABASE IF EXISTS emlplatform;
+	+ create database emlplatform;
+	+ grant all privileges on emlplatform.* to root@'%' identified by 'mysql';
+	+ DROP DATABASE IF EXISTS emltest;	
+	+ create database emltest;
+	+ grant all privileges on emltest.* to root@'%' identified by 'mysql';
+	+ grant all privileges on *.* to root@'%' identified by 'mysql';
+
+- create AMS and APC db: My SQL (Need to create APC db for releases older than 9.2.30)
+	+ If use trunk and branch at the same time change name of ams database and apc database
+		\axs\<TRUNK_DIR>\generic.package\product\src\main\deploy\mysql-ds.xml change ams DB name
+		==> build generic.package, build server
+		
+		\axs\<TRUNK_DIR>\apc.app\apc.app.fwk\server\jbossdeploy\pom.xml change apc DB name, change ip from localhost -> <Your IP>
+		==> build jbossdeploy
+		
+	+ Install Database: (step by step)
+		anywhere: mysql_install_db --user=mysql --datadir=$MYSQL_DATA_DIR --defaults-file=$MYSQL_HOME/my.cnf
+		(my.cnf is sample in Linux Backup)
+		
+	+ Start MySQL:
+		mysqld_safe --skip-name-resolve --basedir=$MYSQL_HOME --ledir=$MYSQL_HOME/bin --datadir=$MYSQL_DATA_DIR --pid-file=$MYSQL_HOME/localhost.localdomain.pid --socket=$MYSQL_HOME/mysql.sock --bind-address=$NMHN_USER_IPADDR --port=3306 --no-defaults&
+		
+		===> plus innoDB (if needed)
+		
+		++ If cannot start to DB:
+				-- su root	
+				-- chown -R tvhoa /var/log/mysqld.log
+				-- startdb.sh
+	+ Config MYSQL
+		soft/mysql/bin: mysqladmin -S $HOME/soft/mysql/mysql.sock -u root password mysql
+		mysqladmin -S $HOME/soft/mysql/mysql.sock -u root -h centos34 password mysql
+		mysql -S $HOME/soft/mysql/mysql.sock -uroot -pmysql	
+					grant all privileges on *.* to root@'%' identified by 'mysql';
+	(use only when config)
+					
+	+ Connect to MySQL:
+		mysql -S $HOME/soft/mysql/mysql.sock -uroot -pmysql
+			
+	+ Create Database: (need to connect first)
+		*(If use trunk and branch, remember change DB name before clean DB)
+		
+		DROP DATABASE IF EXISTS emlplatform;
+		create database emlplatform;
+		grant all privileges on emlplatform.* to root@'%' identified by 'mysql';
+		
+    DROP DATABASE IF EXISTS NI;
+		create database NI;
+		grant all privileges on NI.* to root@'%' identified by 'mysql';
+    
+		DROP DATABASE IF EXISTS emltest;
+		create database emltest;
+		grant all privileges on emltest.* to root@'%' identified by 'mysql';
+		
+		grant all privileges on *.* to root@'%' identified by 'mysql';
+		grant all on *.* to amsadminusr@'%' identified by 'mysql';
+
+- change to <your-trunk-dir>\basic.app\package\target\ams_trunk-SNAPSHOT\server\jboss-5.0.1.GA\bin\ => open run.config => change memory to 1024 1024
+- change generic.package/product => Change POM file from production to development 
+	==> build generic.package
+	
+---------------------------
+- run server: 
+	go to trunk directory run command: ./scripts/runjboss --clean --full
+
+- (need config file product)
+	
+//Hot deploy, restart server must redeploy, you can use Hard deploy by copying jar files to jboss server
+- deploy gpon:
+	+ run mvn jboss:deploy -o for axs-gpon-mobject-plugin, axs-gponshub-mobject-plugin
+	
+- deploy g6:
+	+ run mvn jboss:deploy -o for axs-g6-mobject-plugin
+	
+- deploy iSam:
+	+ run mvn jboss:deploy -o for axs-isam-mobject-plugin, axs-lanx-mobject-plugin
+	
+- deploy APC:
+	+ run script: bash deploy.sh for apc.app/apc.app.fwk/server/jboss-deploy/ 
+
+- deploy SPFE:
+	+ run mvn jboss:deploy -o for spfe.app/spfe.app.fwk/server/axs-spfe-app/
+
+---------------------------	
+- config APC:
+	+ in jmx-console, go to systemproperties, set axs.integrated.force = true (This can be done by adding axs.integrated.force = true to start-server command)
+	+ run web APC: 192.168.95.39:8080, username: admin, pass: admin
+	+ create APC license.
+APC license:
+9.3.x-------------------
+AC8wLQIULVGBHf1IovSR0g/KcTcrw2B2AoECFQCEzLAsmUafP673bdJnp8ITpz6ulQFtrO0A
+BXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVz
+aG9sZHhwP0AAAAAAAAx3CAAAABAAAAAMdAALYXBjLlJlbGVhc2V0AAM5LjR0AA1zdGFuZGJ5
+aG9zdGlkdAAIYThjMGRmNWZ0AAdhcGMuTkJJdAAHRW5hYmxlZHQAEWxpY2Vuc2UuY29tcG9u
+ZW50dAADYXBjdAAOZXhwaXJhdGlvbkRhdGV0AAoyMDE1LzEwLzIwdAAGaG9zdGlkdAAIYThj
+MGRmNWZ0ABNhcGMubmJyX2NsaWVudF9hcHBzdAAEMTAwMHQAD25iX3N1YnNjcl9saW5lc3EA
+fgAPdAAQYXBjLmJhc2VfcHJvZHVjdHQABGxpdmV0AAlhcGMudXNlcnN0AAIyMHQADGxpY2Vu
+c2UudHlwZXQACVRlbXBvcmFyeXQADHR5cGVfc3RhbmRieXQAAHgAAA==
+
+CDE license:
+AC4wLAIUFy3bOHP1K4yUwtNNP9W4bbJ9ygcCFF8uVFWn772v1KhXQgzM81hFTMnnALWs7QAF
+c3IAEWphdmEudXRpbC5IYXNoTWFwBQfawcMWYNEDAAJGAApsb2FkRmFjdG9ySQAJdGhyZXNo
+b2xkeHA/QAAAAAAADHcIAAAAEAAAAAV0ABFsaWNlbnNlLmNvbXBvbmVudHQAA2NkZXQABmhv
+c3RpZHQABmFwY2RldnQAB25lLmdlbnR0AAR0cnVldAALYXV0b19tb2Rpbmd0AAR0cnVldAAH
+bmUuYXNhbXQABHRydWV4AAA=
+
+AMS license:
+9.3.x
+AC4wLAIUPzwfmZfh6k9wGmxJpmqpFk6cOmwCFF6BHemv8Gcsp3VIqTqaRaglHCK1Ba6s7QAF
+c3IAEWphdmEudXRpbC5IYXNoTWFwBQfawcMWYNEDAAJGAApsb2FkRmFjdG9ySQAJdGhyZXNo
+b2xkeHA/QAAAAAAAYHcIAAAAgAAAAEZ0AAhpU0FNLjQuMnQABHRydWV0AAhpU0FNLjQuNXQA
+BHRydWV0AA9MaW5rIE1hbmFnZW1lbnR0AAR0cnVldAAIaVNBTS4zLjJ0AAR0cnVldAAISVZQ
+Uy4zLjd0AAR0cnVldAAIU0hVQi4zLjd0AAR0cnVldAAKNzMyNFJVLjQuMnQABHRydWV0AApH
+UE9OLjQuMy41dAAEdHJ1ZXQAC2Ftcy52ZXJzaW9udAAFdHJ1bmt0AAhJVlBTLjMuNHQABHRy
+dWV0AAtGRU5ULjQuNy41MHQABHRydWV0AAhTSFVCLjMuMnQABHRydWV0AANndWl0AAQ1MDAw
+dAAIaWRtLmlTQU10AAR0cnVldAAIU0hVQi4zLjZ0AAR0cnVldAAIYXBjLm1vZGV0AAZzdHJp
+Y3R0AA9pZG0uU3Vic2NyaWJlcnN0AAUxMDAwMHQACFNIVUIuMy41dAAEdHJ1ZXQACGlkbS5B
+U0FNdAAEdHJ1ZXQAC0FTQU0uNC43LjUwdAAEdHJ1ZXQACFNIVUIuMy40dAAEdHJ1ZXQACEZU
+VEIuMS4wdAAEdHJ1ZXQACFNIVUIuMy4zdAAEdHJ1ZXQACFNIVUIuNC4ydAAEdHJ1ZXQACFNI
+VUIuNC4xdAAEdHJ1ZXQAC0ZFTkkuNC43LjUwdAAEdHJ1ZXQACFNIVUIuNC4wdAAEdHJ1ZXQA
+CEdQT04uNC42dAAEdHJ1ZXQACEdQT04uNC43dAAEdHJ1ZXQACEdQT04uNC41dAAEdHJ1ZXQA
+C2lTQU0uNC4wLjEwdAAEdHJ1ZXQAB2lkbS5QT050AAR0cnVldAALR1BPTi40LjQuMTB0AAR0
+cnVldAALSUhVQi40LjAuMDJ0AAR0cnVldAALaVNBTS5GR040LjF0AAR0cnVldAALU0hVQi40
+LjAuMTB0AAR0cnVldAALR0VMVC41LjEuNjB0AAR0cnVldAANR1BPTi1TSFVCLjQuN3QABHRy
+dWV0AA1HUE9OLVNIVUIuNC41dAAEdHJ1ZXQABG5vZGV0AAQxMDAwdAANR1BPTi1TSFVCLjQu
+NnQABHRydWV0AA1pbnRlcm5hbHRsMWd3dAAEdHJ1ZXQAC0FTQU0uNS4xLjYwdAAEdHJ1ZXQA
+CGlTQU0uMy4zdAAEdHJ1ZXQACGlTQU0uMy40dAAEdHJ1ZXQAC1RIU0EuNC43LjUwdAAEdHJ1
+ZXQACGlTQU0uMy41dAAEdHJ1ZXQACGlTQU0uMy42dAAEdHJ1ZXQAD0dQT04tU0hVQi40LjMu
+NXQABHRydWV0AAhpU0FNLjMuN3QABHRydWV0ABBnZW9ncmFwaGljYWwubWFwdAAEdHJ1ZXQA
+C0ZFTlQuNS4xLjYwdAAEdHJ1ZXQAEEdQT04tU0hVQi40LjQuMTB0AAR0cnVldAALSUhVQi40
+LjAuMTB0AAR0cnVldAALaWRtLlJlbGVhc2V0AAUyLjAuMXQAB0c2LjEwLjZ0AAR0cnVldAAL
+U0hVQi5GR040LjF0AAR0cnVldAAHRzYuMTAuN3QABHRydWV0ABFsaWNlbnNlLmNvbXBvbmVu
+dHQABGNvcmV0AAhJSFVCLjQuNXQABHRydWV0AAdHNi4xMC4ydAAEdHJ1ZXQAA29udHQABDEw
+MDB0AAhJSFVCLjQuMnQABHRydWV0AAtpU0FNLjQuMC4wMnQABHRydWV0AAhJSFVCLjQuMXQA
+BHRydWV0AAh4ZHNscG9ydHQABDEwMDB0AAdpZG0uTkJJdAAHRW5hYmxlZHQABmhvc3RpZHQA
+CGE4YzBkZjVmdAAIaVNBTS40LjF0AAR0cnVldAAIaVNBTS40LjB0AAR0cnVleAAA
+	
+  <Use for releases older than 9.2.30>
+	+ sync add EML provider: 
+		EMS type: AMS
+		Server AMS IP: 192.168.95.39
+		Username: admin
+		Password: admin1
+		=> if sync is not success, will have error : cannot create SPFE service: null
+		
+  (Use for ATT and VZ tickets)
+	+ Change system settings: enable all apc settings at Miscellaneous settings requiring Alcatel-Lucent approval 
+	
+	+ create SPFE user in Admistration/User management, choose profile = SPFE
+
+---------------------------
+- Add code to Eclipse:
+	+ Open eclipse in Linux
+	+ Add classpath variable M2_REPO, value = path to repo folder at Windows -> Preferences -> Java -> Build path -> Classpath variables)
+	
+	+ build eclipse apc.app/apc.app.fwk ==> components, applications: mvn eclipse:eclipse
+	+ build eclipse apc.app/apc.app.fwk/components/util/ejbutils
+	+ build eclipse apc.app/apc.app.fwk/components/util/apcTwiddle
+	+ build eclipse apc.app/plugins (go to pom file close modules you don't want import)
+	+ build eclipse spfe.app/spfe.app.fwk/server
+	
+	+ Import projects to Eclipse
+		-- Should split projects to separate working sets: ams, ams.plugins, apc, apc.plugins, spfe, spfe.plugins
+		-- Import all projects in basic.app/eclipseui to ams working set ->>> dont build
+		-- Import all projects in basic.gpon.4.9, basic.isam.4.3, basic.g6.10.7,... to ams.plugins working set
+		-- Import all projects in apc.app/apc.app.fwk to apc working set
+		-- Import all projects in apc.app/plugins to apc.plugins working set
+		-- Import all projects in spfe.app/spfe.app.fwk to spfe working set
+		-- Import all projects in spfe.app/plugins/spfe.app.plugins.fwk, spfe.app/plugins/spfe.app.plugins.gpon.4.7, spfe.app/plugins/spfe.app.plugins.g6.10.7,... to spfe.plugins working set
+	
+	+ open eclipse.product
+		- add dependences: NE, spfe, plaftform
+		- config lauching: program arg add consoleLog, Vm arg add -Ddeveloper=true
+		- synchronize.
+		- run ams client
+
+- config spfe user: ip linux, username: admin, pass admin
+- add NE => supervision ping 172
+
+=========================================
+If you face to the problem related to SSH (NE Detection, Import/Export, ...), this will help you:
+1/ Login to linux server
+2/ Run the command
+    ssh-keygen -t rsa
+
+When it prompts for the pass word phase, press enter (Donot enter any characters), public and private keys will be generated in ~/.ssh folder with the below file names
+    id_rsa.pub, id_rsa
+
+3/ Run the command
+	cd .ssh cat id_rsa.pub >> authorized_keys
+
+4/ export these env:
+SSH_USER_NAME=<user>
+SSH_KEY_PATH=<home_dir>/.ssh/id_rsa
+AMSSFTPDB_USER_HOME_DIR=<home_dir>
+AMSSFTPDB_USER=<user>
+
+5/If Cannot import/export in AMS
+	chmod 755 .ssh/*
+	chown -R <your user name> .ssh/* (if need)
+	
+=============================================

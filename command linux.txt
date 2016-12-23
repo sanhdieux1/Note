@@ -1,0 +1,128 @@
+-remove Folder:
+rm -rf <name>
+
+-install file tar.bz2:
+tar -xjvf <name>
+
+-extract file .tar.gz:
+tar -zxvf <name>
+tar -xvf file.tar
+
+-update PATH:
+-export PATH
+
+-list user:
+cut -d: -f1 /etc/passwd
+-how to find out the home directory of a user:
+	cat /etc/passwd
+-how to set home directory of a user 
+	usermod -m -d /newhome/username username
+-how to change passwork
+	passwd pdkhoa
+
+-kill a vncsession in linux?
+	ps -ef|grep vnc
+	vnc4server -kill :1
+	vnc4server :1 -geometry 1270x1014
+	service iptables stop
+-kill user:
+killall -KILL -u pdkhoa
+
+-grant all :
+chmod -R 777 foldername
+
+-dd hosts:
+	sudo vi /etc/hosts
+
+-reload db:
+	mysql reload
+	mysql force-reload
+
+-create user: 
+	useradd -m -d /pdkhoa/ pdkhoa 
+-add user default bash shell:
+	usermod -s /bin/bash pdkhoa
+
+-kill vnc:
+	vnc4server -kill :1
+
+-check out svn:
+	svn checkout http://192.168.95.80/svn/axs/collectors/trunk /home/pdkhoa/axs
+
+-create user in mysql:
+-grep process
+	ps -ef | grep pdkhoa | grep maria
+
+
+-How to run server with debug mode
+	./scripts/runjboss --debug --port 9797
+
+-how to reconfig jboss ams server:
+	./scripts/runjboss --clean --reconf
+
+-show all variables (environment):
+	evn
+
+-run tool:
+	mvn exec:java
+-show system info:
+	lscpu
+
+-search for a text string all files under each directory
+	grep -r 'getTableCellRendererComponent' /home/pdkhoa/
+
+	+You can pass -H option to print the filename for each match:
+		grep -H -r 'text string' /home/pdkhoa
+
+	+To just display the filename 
+		grep -H -r 'getTableCellRendererComponent' /home/pdkhoa | cut -d: -f1
+		grep -H -r 'Argument cannot be null' | cut -d: -f1 | grep '.java'
+-relocal subversion: 
+	svn relocate FROM-PREFIX TO-PREFIX [PATH...]
+	EX : 
+	svn relocate http://192.168.95.80/svn/axs/apc.app/trunk http://tiger.in.alcatel-lucent.com/svn/axs/
+
+	svn relocate http://tiger.in.alcatel-lucent.com/svn/axs/collectors/trunk http://192.168.95.80/svn/axs/trunk 
+
+-restart network: 
+ifdown eth0 && sudo ifup eth0
+route add -net 135.249.0.0/16 gw 192.168.92.77
+route add -net 172.21.0.0/16 gw 192.168.92.77
+route add -net 13.1.1.0/24 gw 192.168.92.251
+route add -net 55.55.55.0/24 gw 192.168.92.183
+
+ask:  Long Chau, Nguyen Duy An
+
+-add host:
+ 	nano /etc/resolv.conf
+	service networking restart
+-show route : tracepath 135.249.41.119
+-svn subversion:
+-svn ignore file
+    svn propset svn:ignore <file> .
+-svn ignore current folder
+	svn propedit svn:ignore . 
+-svn to find files that are not under version
+	svn status | awk '/^?/{print $2}'
+
+*svn list http://192.168.95.80/svn/axs/apc.app/trunk
+*svn status|grep "^ *M" 
+
+-build bin apc
+	cd -> vap-package
+	mvn clean install -Dproduct.package=true  -Dproduct.architecture=x64 -Dproduct.platform=linux 
+	mvn clean install -Dproduct.package=true  -Dproduct.architecture=x86 -Dproduct.platform=solaris
+	
+-total commander bookmark: ctrl + D
+
+-copy from server: 
+	scp -r pdkhoa@192.168.92.40:/home/pdkhoa/App/openjdk1.7.tar /pdkhoa/App
+
+
+****Sua phim loi tren linux*****
+System tools -> dconf Editor/gnome/desktop/wm/keybindings
+
+***find and rename****
+
+find . -type f -name 'file*' -exec mv {} "{}_renamed" \;
+ -{} current name.

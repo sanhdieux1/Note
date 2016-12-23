@@ -1,0 +1,23 @@
+Setup mariadb & open jdk (since 9.4.95)
+setup open jdk
+Copy open jdk from \\192.168.72.21\Software\Data directory
+Edit JAVA_HOME variable in bashrc file to your openjdk directory.
+setup mariadb
+Copy mariadb from \\192.168.72.21\Software\Data directory.
+Edit MYSQL_HOME variable in bashrc file to your mariadb directory.
+Edit MYSQL_DATA variable in bashrc file to another directory (e.g. /home/tvhoa/database/maria).
+Go to mariadb\confmysqld file. Edit some variables follow:
+LOCALSTORAGE= your mariadb temp directory
+MYSQL_HOME= your mariadb directory
+run confmysqld file with command "bash confmysqld"
+*Note*: You are facing with "Could not connect: Access denied for user 'amsadminusr'@'server95223' (using password: YES)" error while you are running jboss. To resolve problem go to mysql and grant privilege for amsadminusr user with command:
+
+GRANT GRANT OPTION  ON . TO 'amsadminusr'@'<hostname>' WITH GRANT OPTION;
+
+DROP DATABASE IF EXISTS emlplatform;
+create database emlplatform;
+DROP DATABASE IF EXISTS emltest;
+create database emltest;
+grant all privileges on *.* to root@'server9240' identified by 'mysql';
+grant all privileges on *.* to amsadminusr@'server9240' identified by 'mysql';
+grant all privileges on *.* to root@'%' identified by 'mysql';

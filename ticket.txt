@@ -1,0 +1,10 @@
+APC-21430 [APC 9.5.95 ]The modify of configured Virtual Argument is still supported when service was applied
+APC-21596 [9.5.95_APC_ET]: SPFE service view needs to disable options for a misaligned service
+APC-21595 APC 9.5.95: SPFE - Audit Service works wrong for a missing in NE service
+APC-21544 APC 9.5.95: SPFE - Show All Service Info works wrong for VZ 7360 Voice H.248 service
+APC-21474 APC 9.5.95: SPFE - Refreshing Apply Service Template GUI works wrong for VZ 7360 services
+
+
+APC9595-224
+
+Please help define the name variable and comment for this.

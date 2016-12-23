@@ -1,0 +1,16 @@
+If you face to the problem related to SSH (NE Detection, Import/Export, ...), this will help you: 
+1/ Login to linux server 
+2/ Run the command     ssh-keygen -t rsa  When it prompts for the password phase, press enter (Donot enter any characters), public and private keys will be generated in ~/.ssh folder with the below file names     id_rsa.pub, id_rsa  
+3/ Run the command 	
+	cd .ssh     
+	cat id_rsa.pub >> authorized_keys  
+
+4/ export these env: 
+	SSH_USER_NAME=<user> 
+	SSH_KEY_PATH=<home_dir>/.ssh/id_rsa 
+	AMSSFTPDB_USER_HOME_DIR=<home_dir> 
+	AMSSFTPDB_USER=<user>  
+
+5/If Cannot import/export in AMS 	
+	chmod 755 .ssh/* 	
+	chown -R <your user name> .ssh/* (if need)

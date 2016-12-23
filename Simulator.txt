@@ -1,0 +1,85 @@
+ #how to create simulator
+#- create interface 66.66.66.101-105 igb1:2101-2105
+#on server 72.208 (iNES) putty with root/root123456 (95.135 and 92.183)
+
+
+#D:\AT_Trunk\Data\Simulator\WalkFiles
+#create directory in \\192.168.72.208\root\export\home\ (samba with root/123456)
+
+	ifconfig igb1:2101 plumb up 66.66.66.101/24 (24 nhe, lan sau lam de y xiu) chinh sua ko dung la down luon server ines
+ 
+# GPON 4.9
+cd /export/home/iNES_Release/5.68/build_86
+exporLD_LIBRARY_PATH=/export/home/iNES_Release/5.68/build_86/mysql32bit/lib:/export/home/iNES_Release/5.68/build_86/
+export MIBFILE=/export/home/ldthai/GPON4.8/Total_mib.txt
+./iNESd -i 1 -s 66.66.66.102 -t GPON -f /export/home/ldthai/GPON4.8/iacm.walk &
+export MIBFILE=/export/home/ldthai/GPON4.8/lanx_mib.txt
+./iNESd -i 1 -s 66.66.66.102 -t GPONLANX -f /export/home/ldthai/GPON4.8/shub.walk &
+
+	ifconfig igb1:102 plumb up 66.66.66.102/24
+
+ #G6
+cd /export/home/iNES_Release/5.68/build_86
+export LD_LIBRARY_PATH=/export/home/iNES_Release/5.68/build_86/mysql32bit/lib:/export/home/iNES_Release/5.68/build_86/
+export MIBFILE=/export/home/Walkfile/npdhang/Total_Mib.txt
+./iNESd -i 1 -s 55.55.55.169 -t G6 -g 12.3 -f /export/home/Walkfile/npdhang/G6.walk &
+
+	ifconfig igb1:2103 plumb up 66.66.66.103/24
+	
+#ISAM IHUB
+cd /export/home/iNES_Release/5.68/build_86
+export LD_LIBRARY_PATH=/export/home/iNES_Release/5.68/build_86/mysql32bit/lib:/export/home/iNES_Release/5.68/build_86/
+export MIBFILE=/export/home/ldthai/ISAM5.4/FX/TOTAL_MIB.txt
+./iNESd -i 1 -s 66.66.66.103 -t FTTN -f /export/home/ldthai/ISAM5.4/FX/iacm.walk &
+export MIBFILE=/export/home/ldthai/ISAM5.4/FX/ihub_TOTAL_MIB.txt
+./iNESd -i 1 -s 66.66.66.103 -t IHUB -f /export/home/ldthai/ISAM5.4/FX/ihub.walk &
+ 
+
+cd /export/home/iNES_Release/5.71/build_86
+export LD_LIBRARY_PATH=/export/home/iNES_Release/5.71/build_86/mysql32bit/lib:/export/home/iNES_Release/5.71/build_86/
+export LD_LIBRARY_PATH=/export/home/iNES_Release/5.71/build_86/mysql32bit/lib/:/usr/local/lib:/usr/ccs/lib:/usr/csw/lib:/usr/sfw/lib.:$LD_LIBRARY_PATH
+export MIBFILE=/export/home/Walkfile/pdkhoa/ISAM55/FX/TOTAL_MIB.txt
+./iNESd -i 1 -s 55.55.55.229 -t FTTN -f /export/home/Walkfile/pdkhoa/ISAM55/FX/iacm.walk &
+export MIBFILE=/export/home/Walkfile/pdkhoa/ISAM55/FX/ihub_TOTAL_MIB.txt
+./iNESd -i 1 -s 55.55.55.229 -t IHUB -f /export/home/Walkfile/pdkhoa/ISAM55/FX/ihub.walk & 
+ 
+ 
+ 
+ps -ef|grep 66.66.66.101 (check again)
+
+bash-3.00# ps -ef|grep 66.66.66.101
+    root 22606 22586   0 11:29:33 pts/42      0:02 ./iNESd -i 1 -s 66.66.66.101 -t GPON -f /export/home/ldthai/GPON_49_walkfiles/i
+    root 23290 22197   0 11:50:37 pts/35      0:00 grep 66.66.66.101
+    root 22588 22586   0 11:28:09 pts/42      0:02 ./iNESd -i 1 -s 66.66.66.101 -t GPONLANX -f /export/home/ldthai/GPON_49_walkfil
+bash-3.00# kill -9 22606
+bash-3.00# kill -9 22588
+bash-3.00#
+
+ps -ef | grep 55.55.55.169 |awk '{print $2}' | xargs kill -9 (kill NE)
+
+#########################################################################################################################
+#add simulator in AMS server
+#add port in iptables
+vi /etc/sysconfig/iptables
+enter i, add 2 port on iptables
+
+
+
+#enter ESC, enter :wq!
+
+service iptables restart
+
+#add route for server to reach to NE
+netstat -nr
+
+route add -net 66.66.66.0/24 gw 192.168.72.208  -> (72)
+route add -net 66.66.66.0/24 gw 192.168.95.135  -> (95)
+
+route delete -net 66.66.66.0/24 gw 192.168.72.208
+
+add NE on AMS GUI
+
+
+
+****************ERROR*********************
+http://tiger.in.alcatel-lucent.com:8090/display/Conv/Requirements+to+launch+the+iNESd+simulator

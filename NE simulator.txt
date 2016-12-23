@@ -1,0 +1,36 @@
+
+13.1.1.58
+route thong qua IP  92.251 or 95.251
+
+55.55.55.229
+192.168.72.208
+NAT: 192.168.92.183
+
+cd /export/home/iNES_Release/5.71/build_86
+export LD_LIBRARY_PATH=/export/home/iNES_Release/5.71/build_86/mysql32bit/lib/:/usr/local/lib:/usr/ccs/lib:/usr/csw/lib:/usr/sfw/lib.:$LD_LIBRARY_PATH
+export MIBFILE=/export/home/Walkfile/pdkhoa/GPON410/410PONUTIL/TOTAL_MIB.txt
+./iNESd -i 1 -s 55.55.55.229 -t FTTN -f /export/home/Walkfile/pdkhoa/GPON410/410PONUTIL/iacm.walk &
+export MIBFILE=/export/home/Walkfile/pdkhoa/ISAM55/FX/ihub_TOTAL_MIB.txt
+./iNESd -i 1 -s 55.55.55.229 -t IHUB -f /export/home/Walkfile/pdkhoa/GPON410/410PONUTIL/shub.walk & 
+
+
+
+cd /export/home/iNES_Release/5.68/build_86
+export LD_LIBRARY_PATH=/export/home/iNES_Release/5.68/build_86/mysql32bit/lib:/export/home/iNES_Release/5.68/build_86/
+export MIBFILE=/export/home/Walkfile/pdkhoa/GPON_410_walkfiles/Total_mib.txt
+./iNESd -i 1 -s 55.55.55.229 -t GPON -f /export/home/Walkfile/pdkhoa/GPON_410_walkfiles/iacm.walk &
+export MIBFILE=/export/home/Walkfile/pdkhoa/GPON_410_walkfiles/lanx_mib.txt
+./iNESd -i 1 -s 55.55.55.229 -t GPONLANX -f /export/home/Walkfile/pdkhoa/GPON_410_walkfiles/shub.walk &
+
+
+
+
+Switch XDSL PTM - AMT 
+./pluginModem -i 55.55.55.229 -a XDSL-1-1-5-1 -t 1
+
+
+G6 12.3
+public/private 
+
+GPON
+netman/AMS
