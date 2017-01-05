@@ -3,3 +3,11 @@
 *clear screen cmd:
 	cls
 	
+	
+******find port****
+Windows:  netstat -ano
+Linus: lsof -i:8080
+
+-> kill
+Windows:  taskkill -pid 431 /f
+Linus: kill <pid>
