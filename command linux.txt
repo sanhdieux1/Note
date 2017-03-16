@@ -117,7 +117,7 @@ ask:  Long Chau, Nguyen Duy An
 
 -copy from server: 
 	scp -r pdkhoa@192.168.92.40:/home/pdkhoa/App/openjdk1.7.tar /pdkhoa/App
-
+	scp -r root@192.168.72.21:/Pictures/DC9_AnnualTrip_Dec2016 picture
 
 ****Sua phim loi tren linux*****
 System tools -> dconf Editor/gnome/desktop/wm/keybindings

@@ -11,7 +11,15 @@
 	</dependency>
 	
 	Ex: mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact=org.apache.ws.commons.axiom:axiom-dom:1.2.17:jar:sources
-	
+	mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact=org.apache.axis2:axis2:1.7.4:jar
+
+<!-- https://mvnrepository.com/artifact/org.apache.axis2/axis2 -->
+<dependency>
+    <groupId>org.apache.axis2</groupId>
+    <artifactId>axis2</artifactId>
+    <version>1.7.4</version>
+</dependency>
+
 2. Download jars without pom
 	CM: mvn -DgroupId=com.google.guava -DartifactId=guava -Dversion=16.0.1 dependency:get
 		mvn -DgroupId=org.apache.ws.commons.axiom -DartifactId=axiom-api -Dversion=1.2.17 -Dclassifier=sources dependency:get
@@ -19,3 +27,9 @@
 3. Create project
 
 	mvn archetype:generate -DgroupId=com.vn.com.tma.khoa -DartifactId=Axis2Test -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+	
+4. Build specific module and dependencies in multi-module project
+	mvn -am -pl "module-name"
+	
+	continute build 
+	mvn install -rf :"module-name"

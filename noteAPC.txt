@@ -269,6 +269,7 @@ Class: EquipmentAddressConfigurator
 	3.
 	iptables -L -n
 	iptables -I INPUT -p tcp --dport 8787 -j ACCEPT 
+	vi /etc/sysconfig/iptables
 	#A INPUT -p tcp -m tcp --dport 8787 -j ACCEPT
 	#ams_updatefirewall --debug 
 	service iptables save
@@ -305,3 +306,20 @@ Set Latency: Web setting -> PreConfiguration -> Latency
 *******Automation******
 import : basic.app/automation/axs-automation-test, basic.app/automation/axs-automation-api
 add argument: - automation 192.168.92.40:6220 into amsclient
+
+****Logging anthentication *****
+Setting in module : urn:jboss:domain:security -> NetworkInspectorRealm in standalone-full-ha.xml
+LoggingDatabaseServerLoginModule: compare password db.
+
+******build bin apc***********
+	cd -> vap-package
+	mvn clean install -Dproduct.package=true  -Dproduct.architecture=x64 -Dproduct.platform=linux 
+	mvn clean install -Dproduct.package=true  -Dproduct.architecture=x86 -Dproduct.platform=solaris
+	
+**** clean database APC **** 
+http://192.168.92.40:8080/jmx-console/
+find -> component=core,service=NodeStartUp -> reset()
+
+
+****Standalone config server****
+X:\axs\trunk\generic.package\product\src\main\configuration\

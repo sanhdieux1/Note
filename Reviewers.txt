@@ -10,3 +10,6 @@ Trang Phan
 Tuan Minh Nguyen
 thuan vinh tran
 Quang TRAN 
+
+Enter to another tab (ex: Available Template tab to Import tab) then that means the new page is loaded. It also same as page reloading so the focus is re-set to default
+This is legacy technical so we don't have support Fast-Loading (Ex: Jquery, AngularJS). Hence I resolve this ticket as won't fix.

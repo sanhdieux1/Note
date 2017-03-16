@@ -1,3 +1,17 @@
 **************merge commit*********
 git stash
+git pull
 git stash pop
+
+***checkout revision ***
+git reset --hard <id>
+
+***** Revert changes to modified files.********
+git reset --hard
+
+*****undo commit*****
+*in case you have not pushed the commit publicly yet:
+git reset HEAD~1 --soft 
+
+
+3S4OR-U2HHR-ETQDQ-3TR4B
