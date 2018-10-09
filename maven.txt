@@ -29,7 +29,13 @@
 	mvn archetype:generate -DgroupId=com.vn.com.tma.khoa -DartifactId=Axis2Test -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
 	
 4. Build specific module and dependencies in multi-module project
-	mvn -am -pl "module-name"
+	mvn clean install -Pall -am -pl :<module-name>
+	mvn clean install -Pall -am -pl :partner-webservice
 	
 	continute build 
 	mvn install -rf :"module-name"
+
+5.Create simple project
+    mvn archetype:generate -DgroupId=[your project's group id] -DartifactId=[your project's artifact id] -DarchetypeArtifactId=maven-archetype-quickstart
+
+    EX vie powerShell : mvn archetype:generate "-DgroupId=vn.net.pal" "-DartifactId=VelocityTest" "-DpackageName=vn.net.pal" "-DarchetypeArtifactId=maven-archetype-quickstart" "-DinteractiveMode=false"

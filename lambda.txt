@@ -1,0 +1,1 @@
+data.stream().collect(Collectors.groupingBy(ListingDownline::getUserCode, LinkedHashMap::new, Collectors.toList()));

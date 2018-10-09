@@ -1,0 +1,3 @@
+****node js auto deploy****
+npm i nodemon
+to start:  nodemon --exec npm run start

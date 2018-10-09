@@ -1,0 +1,8 @@
+****Routing***
+using: /#/path
+RouterModule.forRoot(
+            appRoutes,
+            { enableTracing: true, useHash: true} // <-- debugging purposes only
+        )
+		
+		

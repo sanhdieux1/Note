@@ -9,5 +9,8 @@ Windows:  netstat -ano
 Linus: lsof -i:8080
 
 -> kill
-Windows:  taskkill -pid 431 /f
+Windows:  taskkill -pid 11976 /f
 Linus: kill <pid>
+
+
+source ->scan for external changes

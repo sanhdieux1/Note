@@ -1,0 +1,10 @@
+danh cho ai muon biet upgrade angular 5 -> 6
+npm install -g @angular/cli
+npm install @angular/cli
+ng update @angular/cli
+ng update @angular/core
+ng update @angular/material
+ng update
+npm install -g rxjs-tslint
+rxjs-5-to-6-migrate -p src/tsconfig.app.json
+ng update @angular/cli --migrate-only --from=1.7.1
