@@ -1,0 +1,9 @@
+#main {
+  width: 67%; }
+  #main .left, #main .right {
+    font-size: 2em; }
+    #main .left a, #main .right a {
+      font-weight: bold; }
+  #main .bottom {
+    font-size: 3em;
+    color: abc; }
