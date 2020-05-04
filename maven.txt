@@ -23,7 +23,7 @@
 2. Download jars without pom
 	CM: mvn -DgroupId=com.google.guava -DartifactId=guava -Dversion=16.0.1 dependency:get
 		mvn -DgroupId=org.apache.ws.commons.axiom -DartifactId=axiom-api -Dversion=1.2.17 -Dclassifier=sources dependency:get
-
+mvn -DgroupId=org.jboss.resteasy -DartifactId=resteasy-client -Dversion=3.0.8.Final dependency:get
 3. Create project
 
 	mvn archetype:generate -DgroupId=com.vn.com.tma.khoa -DartifactId=Axis2Test -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
@@ -39,3 +39,6 @@
     mvn archetype:generate -DgroupId=[your project's group id] -DartifactId=[your project's artifact id] -DarchetypeArtifactId=maven-archetype-quickstart
 
     EX vie powerShell : mvn archetype:generate "-DgroupId=vn.net.pal" "-DartifactId=VelocityTest" "-DpackageName=vn.net.pal" "-DarchetypeArtifactId=maven-archetype-quickstart" "-DinteractiveMode=false"
+	
+	6. Maven Debug
+	mvnDebug -Dtest=ReconciliationServiceIT#delete_Partial_PaymentBooking_AfterReconciliation test -DforkMode=never

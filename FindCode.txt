@@ -1,0 +1,16 @@
+Upload file
+- UploadGroovyScriptResource
+
+my tenant: cc352c81-a21b-42f9-a796-fe7d7394e3af
+
+BusinessCaseFieldValue -> positionIndex = null -> no repeat
+
+BookingDetailTemplateEntity(snippet_template) -> BookingDetailEntity
+
+entity listener -> BookingDetailListener
+
+bookingDetailsByGroupInEachSnippet.computeIfAbsent(stateByGroup, v -> new ArrayList<>())
+
+exception ->> SystemExceptionMapper
+
+TransferSetup -> AbstractItemService.shouldCheckRemovableItems() -> GeneralBalanceChecker.checkRemovableItems()

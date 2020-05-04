@@ -1,0 +1,53 @@
+mvn clean install "-Dmaven.test.skip=true"
+
+**Hot deploy***
+mvn clean install "-Dmaven.test.skip=true" wildfly:deploy
+
+** Run BDD Test**
+- mvn clean test -ParquillianCucumberH2
+  *arquillianCucumberH2 : auto download and deploy required package into "luz_accounting_integration_test\target\wildfly-10.0.0.Final"
+  If not use arquillianCucumberH2, you need deploy all required on localhost
+- mvn clean test -Dsurefire.skipAfterFailureCount=1
+- mvn test -Dcucumber.options="--tags @manual_payment_booking_net_tax_rate_collected_company"
+ **ERROR**
+  - Inconsistence database version. PostgreSQL version 9.6 : Access to DialectResolutionInfo cannot be null when 'hibernate.dialect' not set
+  - "Cannot find current account configuration of companyId: 1 with status OPEN" -> go to DB - luz_accoungting/<tenant>/accounting_configuration -> insert record or post request <..>/accounting-configurations
+1. Những technique mình sử dụng trong project hiện tại: Jax-RS, JPA, Bean validator, Request interceptor, Maven, Junit, Arquillian, Cucumber, Postgresql, Docker, Sonar... đây hầu như là những cái standard của Java, nếu cty cũ các bạn đang xài những cái khác như Spring thì thực ra nó cũng extend từ những cái trên (J2EE), nếu kiến thức Java bạn tốt thì a sure là tụi e sẽ catch up rất nhanh.
+
+
+mvn archetype:generate "-DarchetypeGroupId=io.cucumber" "-DarchetypeArtifactId=cucumber-archetype" "-DarchetypeVersion=2.3.1.2" "-DgroupId=com.khoa" "-DartifactId=hellocucumber" "-Dpackage=com.khoa" "-Dversion=1.0.0-SNAPSHOT" "-DinteractiveMode=false"
+
+
+**** "companyTypes" ****
+  - luz-finance/<tenant>/company_vat  table ->> billing + reporting_vat
+  
+  
+****
+fields:  operator: "OR"   --->  isSingleSelectionField()
+
+
+****Create Company***
+ID: CHE-999.999.996
+
+
+*** How to run IT ****
+copy 2 file arquillian.xml and arquillian.properties to luz_accounting\src\test\resources\
+
+***How database work***
+flywaydb.org
+
+
+***Resolve Type***
+handleBusinessCaseEntryForSpecialType()
+
+
+****RepeatingGroup***
+RepeatingGroup -> 
+
+***Find log***
+awk '/2019-06-26 04:/' /opt/wildfly/standalone/log/server.log > outputfileAt8.txt
+
+
+***Test performane ***
+Use ab (apache benchmarking)
+

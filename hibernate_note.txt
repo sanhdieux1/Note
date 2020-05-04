@@ -1,0 +1,27 @@
+getRootChartOfAccountEntity
+
+getEntityManager().setProperty("hibernate.show_sql", true)
+
+<property name="hibernate.show_sql" value="true" />
+<property name="hibernate.format_sql" value="true" />
+
+
+<context-param>
+        <param-name>resteasy.resources</param-name>
+        <param-value>org.jboss.resteasy.plugins.stats.RegistryStatsResource</param-value>
+    </context-param>
+	
+	
+
+pattern replace Notepad++: .*task-\d+\)(\s+.*$)
+
+maven hibernate:create
+
+******Mapping without Constraint********
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false, foreignKey=@ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private UserInfoDTO userInfo
+    
+    
+*********//avoid n + 1 query - using graph auto fetch *******
+        root.fetch("devices", JoinType.LEFT)

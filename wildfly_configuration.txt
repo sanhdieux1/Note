@@ -1,0 +1,2 @@
+JVM Option: 
+  - Select specific configuration:  -Djboss.server.default.config=standalone-bdd.xml

@@ -1,0 +1,49 @@
+BeanCopier: EntityModelMapper
+
+******Swagger****
+sau này mn xài swagger thông qua project luz_api_expore
+
+project này đã được include vào luz_module_bundle
+
+
+SM:
+Wow - thong.nguyen
+Next - Nam Ha
+X - a Loc
+
+
+**** perfetch match ****
+we need an amount and with at least one of the following condition:
+- ISR reference
+- partner name
+for perfect match
+
+===================
+we need an amount and with at least one of the following condition:
+- partner name (fuzzy*)
+- msgID
+for proposals
+
+
+
+****Hot Fix***
+- Create banch from release tag
+- Increase version trong branch hotfix(pom.xml) -> 0.00.40.01
+- tạo branch hotfix cho luz_dist -> update version của file war mới vào file pom + update version của luz_dist -> 0.00.40.01
+- Deploy and test on staging
+- Create confluence page for hoxfit
+- Send email 
+
+
+******* Packing project schedule *****
+Free Code (Không merge master): Trưa T2 - Trưa T3
+Build tag, package T3
+Test T4,T5
+Send package: end of T5
+
+
+****Permission deny public_role*****
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO public_role;
+
+*****Ivy********
+\\hcmc-fsr\MonthlySharing\Technical_club\Axon.ivy Training Videos

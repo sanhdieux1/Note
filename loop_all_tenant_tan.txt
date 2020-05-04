@@ -1,0 +1,22 @@
+DO
+$$
+	DECLARE _schema TEXT;
+	DECLARE open_balance_booking_id bigint;
+BEGIN
+	FOR _schema IN SELECT nspname AS schema_name 
+					FROM pg_catalog.pg_namespace n
+						JOIN pg_catalog.pg_class c ON n.oid = c.relnamespace
+						JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
+					WHERE nspname LIKE 's_%' AND c.relname = 'booking_detail' AND a.attname = 'booking_type_code'
+	LOOP
+		--RAISE NOTICE 'Checking SCHEMA: %', _schema;
+		EXECUTE 'set schema ''' || _schema ||'''';
+			SELECT booking_header_id INTO open_balance_booking_id FROM accounting_configuration WHERE fiscal_from = (SELECT MIN(fiscal_from) FROM accounting_configuration);
+			IF (open_balance_booking_id IS NOT NULL) AND
+				(EXISTS (SELECT * FROM booking_detail as bd WHERE booking_header_id = open_balance_booking_id AND bd.booking_type_code like '%_INVOICE')) -- AND bd.vat_amount = 0.00 AND bd.links LIKE '%vat_case:%'
+			THEN
+				RAISE notice 'Schema: % || booking_header_id: %', _schema, open_balance_booking_id;
+			END IF;
+	END LOOP;
+END;
+$$

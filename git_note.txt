@@ -1,0 +1,10 @@
+- revert commit chưa push.
+git reset HEAD~
+git reset --hard HEAD~~
+
+git revert --no-commit 0766c053..HEAD
+
+
+- revert commit pushed -> reset branch HEAD 
+  git reset --hard d167ace
+  git push origin -f

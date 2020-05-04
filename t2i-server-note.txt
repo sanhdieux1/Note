@@ -1,0 +1,101 @@
+java 
+
+setup work
+ -> \\aavn-ws-301\softwares\office 2007\Office64.en-us
+ 
+ 
+ 
+JAVA project:
+XECM: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/XECM/Server/Java/xecm/trunk
+Xcomponent: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/XComponent/Server/Java/xcomponent/trunk
+XDEV-Wildfly: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/ASBP/Groupe-T2i/Server/Maven/xdev/xdev-wildfly/trunk
+XSEC: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/XFramework/Server/Java/xframework-security/trunk
+XOST: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/XFramework/Server/Java/xframework-objectstore/trunk
+XEVENT: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/XFramework/Server/Java/xframework-event/trunk
+
+Angular Project:
+XECM: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/XECM/Server/Web/trunk
+
+
+redmine: http://172.24.100.163/redmine/rb/master_backlog/5star
+
+xcomponent , security -> fail test
+
+portal: 
+    portal-06
+    https://vntils06:8443/xframework-saas-web/xframework-portal-app/#/portal
+
+
+link: XECM-06
+https://vntils06:8443/xecm-web/xecm-app/index.html#/document-search-and-manage-list
+
+XECM-06
+https://vntils06:8443/xecm-web/xecm-app/index.html#/document-search-and-manage-list
+
+Wildlfy-06
+http://vntils06:9990/console/App.html#home
+admin /vnadmin
+
+        
+Solr-06
+https://vntils06:8984/solr/#/Default/query
+
+***server***
+\\192.168.73.13\TI_5Star\Prepare for review\
+account: administrator
+pass: GenVN2Sec
+
+vntiws02: admin\GenVN2Sec2020\GenVN2Sec05
+vntiws04: admin\GenVN2Sec5
+
+*** Find doc****
+C:\Users\pdkhoa01\Data\code\t2i\xecm\2.1.22.xx\xecm-doc\src\main\resources\doc\raw\Youdoc_default_subscriptions__security_elements
+
+
+******Log Time******
+http://172.24.100.163/redmine/issues/12714
+
+
+
+
+*****Create new environment****
+Init SPs: C:\Users\pdkhoa01\Data\code\t2i\xecm\trunk\xecm-dist\src\main\resources\dataAccess\store_procedures\SQL Server\xecm_db_mssql_2.1.23.0.sql
+C:\Users\pdkhoa01\Data\code\t2i\server\resource-process
+
+Init Table: C:\Users\pdkhoa01\Data\code\t2i\xecm\trunk\xecm-dist\src\main\resources\dataAccess\XECM_Initial_Tables_Script.sql
+
+
+
+**** Find Code ************
+Entitymanager with environment: persistency.xml / MultiTenantConnectionProviderImpl
+
+XECMStartupServices
+xecm-ixx-importation.xml
+TowersBatchRequestECMJobsJMSConsumer
+TowersBatchRequestJMSPublisher
+
+XECMSignatureServices#hadProofZipFile
+DocumentRestService#findRepresentation
+
+******Bean process***********
+XECMExportProcessorStartup -> XECMExportProcessorBatchlet
+
+****Event registry***
+EventRegistryStartupServices#startIntervalTimers -> #runTask / XECMIXXImportationBatchlet / XECMJSONImportationBatchlet / 
+Queue: XECMEventMonitoringQueueJMSConsumer
+****Find Code Web ***
+vertical-floating-toolbar
+
+
+****Fix compress Error******
+- Check line error Ex: 9714 in .tmp/concat/scripts/xecm-webapp-scripts.js
+- Go to \xecm-web\trunk\target\.tmp\concat\scripts\xecm-webapp-scripts.js:9714
+
+
+***iserial env***
+172.24.100.231 -> vnpdk@ti-informatique.com/can@7427
+ti-informatique.com\Administrateur -> E7h2kVv649
+
+**zoom account:
+hcmc-ict@axonactive.com
+AAVNms123G
