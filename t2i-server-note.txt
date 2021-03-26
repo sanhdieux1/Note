@@ -3,59 +3,25 @@ java
 setup work
  -> \\aavn-ws-301\softwares\office 2007\Office64.en-us
  
- 
- 
-JAVA project:
-XECM: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/XECM/Server/Java/xecm/trunk
-Xcomponent: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/XComponent/Server/Java/xcomponent/trunk
-XDEV-Wildfly: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/ASBP/Groupe-T2i/Server/Maven/xdev/xdev-wildfly/trunk
-XSEC: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/XFramework/Server/Java/xframework-security/trunk
-XOST: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/XFramework/Server/Java/xframework-objectstore/trunk
-XEVENT: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/XFramework/Server/Java/xframework-event/trunk
-
-Angular Project:
-XECM: https://chtisrvdev.ti-informatique.com/svn/ti-informatique/XECM/Server/Web/trunk
-
-
-redmine: http://172.24.100.163/redmine/rb/master_backlog/5star
-
-xcomponent , security -> fail test
-
-portal: 
-    portal-06
-    https://vntils06:8443/xframework-saas-web/xframework-portal-app/#/portal
-
-
-link: XECM-06
-https://vntils06:8443/xecm-web/xecm-app/index.html#/document-search-and-manage-list
-
-XECM-06
-https://vntils06:8443/xecm-web/xecm-app/index.html#/document-search-and-manage-list
-
-Wildlfy-06
-http://vntils06:9990/console/App.html#home
-admin /vnadmin
-
-        
-Solr-06
-https://vntils06:8984/solr/#/Default/query
 
 ***server***
 \\192.168.73.13\TI_5Star\Prepare for review\
 account: administrator
 pass: GenVN2Sec
 
+vntils03: VNTIWS03\admin:GenVN2Sec
 vntiws02: admin\GenVN2Sec2020\GenVN2Sec05
 vntiws04: admin\GenVN2Sec5
+***AS400***
+ti-informatique.com\vncud
+172.24.100.231
+aE24VWZyKr
+
+vntils07 -pw root/pa$$w0rd
+"C:\Program Files\PuTTY\putty.exe" -ssh root@vntils13 -pw pa$$w0rd
 
 *** Find doc****
 C:\Users\pdkhoa01\Data\code\t2i\xecm\2.1.22.xx\xecm-doc\src\main\resources\doc\raw\Youdoc_default_subscriptions__security_elements
-
-
-******Log Time******
-http://172.24.100.163/redmine/issues/12714
-
-
 
 
 *****Create new environment****
@@ -79,6 +45,9 @@ DocumentRestService#findRepresentation
 
 ******Bean process***********
 XECMExportProcessorStartup -> XECMExportProcessorBatchlet
+XECMDataImportationStartup -> -> xecm-data-importation.xml 3 steps ->  XECMDataImportProcessor -> update SOLR_STATUS -> 1 (finish)
+
+  + Sorl queue: XOSTIndexProcessQueue
 
 ****Event registry***
 EventRegistryStartupServices#startIntervalTimers -> #runTask / XECMIXXImportationBatchlet / XECMJSONImportationBatchlet / 
@@ -95,7 +64,92 @@ vertical-floating-toolbar
 ***iserial env***
 172.24.100.231 -> vnpdk@ti-informatique.com/can@7427
 ti-informatique.com\Administrateur -> E7h2kVv649
+-> aE24VWZyKr
+
+***JY server***
+tiwsivdv01 -> login -> vcdo@groupe-t2i.local\5StarSM!
 
 **zoom account:
 hcmc-ict@axonactive.com
 AAVNms123G
+
+***Widget***
+note* build with out remove workspace from xcomponent-widgets-js-dev
+xcomponent-widgets-js-dev\ workspace\target\docs\index.html
+
+
+****Error******
+ - Can't connect JDBC when ecm start up -> add this line into standalone-full.xml <property name="com.arjuna.ats.arjuna.allowMultipleLastResources" value="true"/>
+   + Reason: Multiple Non-Xa datasource in one transaction.
+   
+*** Ldap config***
+1. ch.xpertline.component.configuration.UserPrincipalDomain = Dev002
+2. ch.xpertline.component.ldap.systemName/ch.xpertline.framework.security.systemName = VNTIWS04.aavn.local (domain name instead)
+3. Config domain.xml : <security-domain name="XpertLineSecurityDomain" cache-type="default">
+4. Add Java certificate
+5. Datasource: xlinedta001
+
+*** Sorl ***
+1. set port 8984 into "solr.in.cmd"
+2. clone json file config "server\dataimport"
+3. execute : scripts\cloud-scripts\solr-cloud-update-security.bat 
+            solr-cloud-update-config.bat
+4. restart sorl
+
+***Mongodb***
+mongoimport --db=xlinedta001_kh --collection=cwf_contact --type=csv --headerline --drop --file=C:\Users\pdkhoa\Desktop\backup\contact.csv --ignoreBlanks --host=localhost:27019
+
+
+**** Efolder****
+
+
+****Generate Document Id *****
+EnumeratorServices -> maximum 60466175 document per/day
+1. link document - efolder: efolder-iframe-document-directive.js#messageHandler  & referenced-document-display-list-directive.js#messageHandler
+
+
+
+****Undertow****
+<!--access-log pattern="%h %t ecm-uri=%r status-code=%s bytes-sent=%b time-consuming=%D" use-server-log="true"/-->
+
+
+****Delete queue****
+- remove in \domain\servers\xdev-server-one\data\activemq\
+- 
+    DELETE from _xlinedta_xecm_5star13_default.dbo.JOB_EXECUTION;
+    DELETE from _xlinedta_xecm_5star13_default.dbo.JOB_INSTANCE;
+    DELETE from _xlinedta_xecm_5star13_default.dbo.PARTITION_EXECUTION;
+    DELETE from _xlinedta_xecm_5star13_default.dbo.STEP_EXECUTION;
+    
+    
+***Login mongo****
+xline-service-user@Dev002=xl4Jee@ChangeIt1
+
+
+****Ti2 server test****
+https://tilsivte01:8518/xframework-saas-web/xframework-portal-app/
+XCWF_UserJYPE/Covid2020
+
+db: t2wsdbdv01.groupe-t2i.local\DEV2019
+sa/s@4DEV2019
+
+winSCP info:
+host: tilsivte01
+uid/pwd: root/Y9gVOLRX3qbureO
+
+log: sftp://root:Y9gVOLRX3qbureO@tilsivte01/opt/wildfly-17.0.1.Final/domain/servers/Dev-Test-server-one/log/server.log
+
+https://tilsivte04:8518/xframework-saas-web/xframework-portal-app/
+XCWF_UserJYPE/Covid2020
+
+winSCP: 
+host: tilsivte04
+uid/pwd: root/Q4Y3RkSNmUR3EZ
+
+database mr.Cuong
+host: aavn-ws-300
+user: sa
+password: pa$$w0rd123
+
+hcmc-5star@axonactive.vn
+5starvn

@@ -11,7 +11,7 @@
 	</dependency>
 	
 	Ex: mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact=org.apache.ws.commons.axiom:axiom-dom:1.2.17:jar:sources
-	mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact=org.apache.axis2:axis2:1.7.4:jar
+	mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact=dev.morphia.morphia:core:1.5.7:jar:sources
 
 <!-- https://mvnrepository.com/artifact/org.apache.axis2/axis2 -->
 <dependency>
@@ -42,3 +42,12 @@ mvn -DgroupId=org.jboss.resteasy -DartifactId=resteasy-client -Dversion=3.0.8.Fi
 	
 	6. Maven Debug
 	mvnDebug -Dtest=ReconciliationServiceIT#delete_Partial_PaymentBooking_AfterReconciliation test -DforkMode=never
+    
+6. Search dependency tree
+    mvn dependency:tree -Dincludes=ch.*
+    
+7. Force update dependencies
+   mvn -U clean install
+   
+8. Set release version
+    mvn versions:set -DnewVersion=2.1.26.13

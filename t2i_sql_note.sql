@@ -47,7 +47,8 @@ SELECT (SELECT id FROM framework_security_class WHERE name = 'NOT_SECURED_DOCUME
 
 -- delete from solr
 https://vntils06:8984/solr/NonPac/update?stream.body=%3Cdelete%3E%3Cquery%3Eid:%22XECM-DOCUMENT--NONPAC-BY2IMUT8.XML%22%3C/query%3E%3C/delete%3E&commit=true
-https://vntils06:8984/solr/Dev004/update?stream.body=%3Cdelete%3E%3Cquery%3EsoftwareCode:XCWF/query%3E%3C/delete%3E&commit=true
+https://localhost:8984/solr/KH/update?stream.body=<delete><query>softwareCode:XFRAMEWORK-EVENT</query></delete>&commit=true
+https://localhost:8984/solr/KH/update?stream.body=<delete><query>objectId:2005</query></delete>&commit=true
 
 https://vntils06:8984/solr/NonPac/update?stream.body=%3Cdelete%3E%3Cquery%3Eid:%22XECM-FOLDER--NONPAC-11446651%22%3C/query%3E%3C/delete%3E&commit=true
 
@@ -98,14 +99,19 @@ create database xlinedtaxecmUnitTests_05 COLLATE French_CI_AI;
 --SQL Server: 
 SELECT * INTO _xlinedta_xecm_5star_nonpac.dbo.ecm_param_bk1 FROM _xlinedta_xecm_5star_nonpac.dbo.ecm_param
 --iSeries: 
-XDOCDTA001 ->XDOCDTA30A
-XDOCDFX001 -> XDOCDFX30A
-XSECDTA001 -> XSECDTA30A
-XCXXDTASM,XDOCDFXSM,XDOCDTASM,XSECDFXSM,XSECDTASM
-XDOCDFX30A,XDOCDTA30A,XSECDTA30A
+XDOCDTA001 -> XDOCDTA5ST
+XDOCDFX001 -> XDOCDFX5ST
+XSECDTA001 -> XSECDTA5ST
+XDOCDTA5ST,XDOCDFX5ST,XSECDTA5ST
+XDOCDFX30A,XDOCDTA30A,XSECDTA30A -> depredecate
 
 CREATE TABLE XDOCDTA30A.OP8WT_BK LIKE XDOCDTA30A.OP8WT;
 INSERT INTO XDOCDTA30A.OP8WT_BK (SELECT * FROM XDOCDTA30A.OP8WT);
+
+-- drop column AS400 --
+CALL QSYS2.QCMDEXC('ADDRPYLE SEQNBR(1501) MSGID(CPA32B2) RPY(''I'')');
+CALL QSYS2.QCMDEXC('CHGJOB INQMSGRPY(*SYSRPYL)');
+ALTER TABLE XDOCDTA5ST.ARAPREP DROP COLUMN PROCSTATE;
 
 --- DLQ retry
   max-delivery-attempts=10
@@ -121,3 +127,13 @@ find asssign task:
 {"efolder_steps.efolder_step_tasks.eFolder_step_assignments.assignee_user_id":"khoa.pham@dev002"}
 
 find sub:
+
+
+---- export doc -- 
+CALL XDOCDTA5ST.EXPORTDOC('UNIQUE-SESSION_DEV_C','DZKAKV6D.DOC','NonPac', 'fr', '');
+
+SELECT * FROM XDOCDTA5ST.TOBJDESC;
+
+BEGIN
+    THROW 51000,'Xample Exception',1
+END
