@@ -1,0 +1,1291 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<domain xmlns="urn:jboss:domain:10.0">
+    <extensions>
+        <extension module="org.jboss.as.clustering.infinispan"/>
+        <extension module="org.jboss.as.clustering.jgroups"/>
+        <extension module="org.jboss.as.connector"/>
+        <extension module="org.jboss.as.ee"/>
+        <extension module="org.jboss.as.ejb3"/>
+        <extension module="org.jboss.as.jaxrs"/>
+        <extension module="org.jboss.as.jdr"/>
+        <extension module="org.jboss.as.jmx"/>
+        <extension module="org.jboss.as.jpa"/>
+        <extension module="org.jboss.as.jsf"/>
+        <extension module="org.jboss.as.jsr77"/>
+        <extension module="org.jboss.as.logging"/>
+        <extension module="org.jboss.as.mail"/>
+        <extension module="org.jboss.as.modcluster"/>
+        <extension module="org.jboss.as.naming"/>
+        <extension module="org.jboss.as.pojo"/>
+        <extension module="org.jboss.as.remoting"/>
+        <extension module="org.jboss.as.sar"/>
+        <extension module="org.jboss.as.security"/>
+        <extension module="org.jboss.as.transactions"/>
+        <extension module="org.jboss.as.webservices"/>
+        <extension module="org.jboss.as.weld"/>
+        <extension module="org.keycloak.keycloak-adapter-subsystem"/>
+        <extension module="org.wildfly.extension.batch.jberet"/>
+        <extension module="org.wildfly.extension.bean-validation"/>
+        <extension module="org.wildfly.extension.clustering.singleton"/>
+        <extension module="org.wildfly.extension.core-management"/>
+        <extension module="org.wildfly.extension.discovery"/>
+        <extension module="org.wildfly.extension.ee-security"/>
+        <extension module="org.wildfly.extension.elytron"/>
+        <extension module="org.wildfly.extension.io"/>
+        <extension module="org.wildfly.extension.messaging-activemq"/>
+        <extension module="org.wildfly.extension.microprofile.config-smallrye"/>
+        <extension module="org.wildfly.extension.microprofile.opentracing-smallrye"/>
+        <extension module="org.wildfly.extension.request-controller"/>
+        <extension module="org.wildfly.extension.security.manager"/>
+        <extension module="org.wildfly.extension.undertow"/>
+        <extension module="org.wildfly.iiop-openjdk"/>
+    </extensions>
+    <system-properties>
+        <property name="java.net.preferIPv4Stack" value="true"/>
+        <property name="ch.xpertline.framework.sso.configuration.enableSSONegotiation" value="false"/>
+        <property name="ch.xpertline.framework.sso.configuration.enableSSOProxyForwarding " value="false"/>
+        <property name="org.icepdf.core.streamcache.enabled" value="true"/>
+        <property name="jboss.node.name" value="Pac,Dev004,KH,NonPac"/>
+    </system-properties>
+    <management>
+        <access-control provider="simple">
+            <role-mapping>
+                <role name="SuperUser">
+                    <include>
+                        <user name="$local"/>
+                    </include>
+                </role>
+            </role-mapping>
+        </access-control>
+    </management>
+    <profiles>
+        <profile name="xdev-full-ha">
+            <subsystem xmlns="urn:jboss:domain:logging:7.0">
+                <console-handler name="CONSOLE">
+                    <level name="DEBUG"/>
+                    <formatter>
+                        <named-formatter name="COLOR-PATTERN"/>
+                    </formatter>
+                </console-handler>
+                <size-rotating-file-handler name="FILE" autoflush="true">
+                    <level name="DEBUG"/>
+                    <encoding value="UTF-8"/>
+                    <formatter>
+                        <pattern-formatter pattern="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"/>
+                    </formatter>
+                    <file relative-to="jboss.server.log.dir" path="server.log"/>
+                    <rotate-size value="50M"/>
+                    <max-backup-index value="15"/>
+                    <append value="true"/>
+                </size-rotating-file-handler>
+                <logger category="com.arjuna">
+                    <level name="WARN"/>
+                </logger>
+                <logger category="org.jboss.as.config">
+                    <level name="WARN"/>
+                </logger>
+                <logger category="sun.rmi">
+                    <level name="WARN"/>
+                </logger>
+                <logger category="org.eclipse.yasson.internal.ReflectionUtils">
+                    <level name="ERROR"/>
+                </logger>
+                <logger category="ch.xpertline.xecm">
+                    <level name="DEBUG"/>
+                </logger>
+                <logger category="ch.xpertline.xcwf">
+                    <level name="DEBUG"/>
+                </logger>
+                <root-logger>
+                    <level name="INFO"/>
+                    <handlers>
+                        <handler name="CONSOLE"/>
+                        <handler name="FILE"/>
+                    </handlers>
+                </root-logger>
+                <formatter name="PATTERN">
+                    <pattern-formatter pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n"/>
+                </formatter>
+                <formatter name="COLOR-PATTERN">
+                    <pattern-formatter pattern="%K{level}%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n"/>
+                </formatter>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:batch-jberet:2.0">
+                <default-job-repository name="jdbc"/>
+                <default-thread-pool name="batch"/>
+                <job-repository name="jdbc">
+                    <jdbc data-source="xlinedta000"/>
+                </job-repository>
+                <thread-pool name="batch">
+                    <max-threads count="10"/>
+                    <keepalive-time time="30" unit="seconds"/>
+                </thread-pool>
+                <thread-pool name="xframework-event-batch-thread-pool">
+                    <max-threads count="10"/>
+                    <keepalive-time time="30" unit="seconds"/>
+                </thread-pool>
+                <thread-pool name="xframework-print-batch-thread-pool">
+                    <max-threads count="10"/>
+                    <keepalive-time time="30" unit="seconds"/>
+                </thread-pool>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:bean-validation:1.0"/>
+            <subsystem xmlns="urn:jboss:domain:core-management:1.0"/>
+            <subsystem xmlns="urn:jboss:domain:datasources:5.0">
+                <datasources>
+                    <datasource jndi-name="java:jboss/datasources/ExampleDS" pool-name="ExampleDS" enabled="true" use-java-context="true">
+                        <connection-url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</connection-url>
+                        <driver>h2</driver>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                    </datasource>
+                    <datasource jta="false" jndi-name="java:jboss/xlinedta000" pool-name="xlinedta000" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:mysql://localhost:3306/xlinedta000</connection-url>
+                        <driver>mysql</driver>
+                        <security>
+                            <user-name>root</user-name>
+                            <password>admin</password>
+                        </security>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="false" jndi-name="java:jboss/xlinedta001" pool-name="java:jboss/xlinedta001" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_default</connection-url>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>100</min-pool-size>
+                            <initial-pool-size>50</initial-pool-size>
+                            <max-pool-size>1000</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="true" jndi-name="java:jboss/xlinedta001_KH" pool-name="xlinedta001_KH" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star_kh</connection-url>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>100</min-pool-size>
+                            <initial-pool-size>50</initial-pool-size>
+                            <max-pool-size>1000</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="true" jndi-name="java:jboss/xlinedtaxecm_KH" pool-name="xlinedtaxecm_KH" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star_kh</connection-url>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>200</min-pool-size>
+                            <initial-pool-size>80</initial-pool-size>
+                            <max-pool-size>1200</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="false" jndi-name="java:jboss/xlinedtaxecm_batch_KH" pool-name="java:jboss/xlinedtaxecm_batch_KH" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star_kh</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>100</min-pool-size>
+                            <initial-pool-size>50</initial-pool-size>
+                            <max-pool-size>1000</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="true" jndi-name="java:jboss/xlinedta001_Deploy" pool-name="xlinedta001_Deploy" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_deploy</connection-url>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>100</min-pool-size>
+                            <initial-pool-size>50</initial-pool-size>
+                            <max-pool-size>1000</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="true" jndi-name="java:jboss/xlinedtaxecm_Deploy" pool-name="xlinedtaxecm_Deploy" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_deploy</connection-url>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>200</min-pool-size>
+                            <initial-pool-size>80</initial-pool-size>
+                            <max-pool-size>1200</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <timeout>
+                            <set-tx-query-timeout>false</set-tx-query-timeout>
+                            <blocking-timeout-millis>0</blocking-timeout-millis>
+                            <idle-timeout-minutes>0</idle-timeout-minutes>
+                            <query-timeout>0</query-timeout>
+                            <use-try-lock>0</use-try-lock>
+                            <allocation-retry>0</allocation-retry>
+                            <allocation-retry-wait-millis>0</allocation-retry-wait-millis>
+                        </timeout>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="false" jndi-name="java:jboss/xlinedtaxecm_batch_Deploy" pool-name="java:jboss/xlinedtaxecm_batch_Deploy" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_deploy</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>100</min-pool-size>
+                            <initial-pool-size>50</initial-pool-size>
+                            <max-pool-size>1000</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="true" jndi-name="java:jboss/xlinedta001_Pac" pool-name="xlinedta001_Pac" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_pac</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>100</min-pool-size>
+                            <initial-pool-size>50</initial-pool-size>
+                            <max-pool-size>1000</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="true" jndi-name="java:jboss/xlinedta001_NonPac" pool-name="xlinedta001_NonPac" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_nonpac</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>100</min-pool-size>
+                            <initial-pool-size>50</initial-pool-size>
+                            <max-pool-size>1000</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="true" jndi-name="java:jboss/xlinedta001_Dev004" pool-name="xlinedta001_Dev004" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_dev004</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker"/>
+                            <background-validation>true</background-validation>
+                        </validation>
+                    </datasource>
+                    <datasource jta="true" jndi-name="java:jboss/xlinedtaxecm" pool-name="xlinedtaxecm" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_default</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>200</min-pool-size>
+                            <initial-pool-size>70</initial-pool-size>
+                            <max-pool-size>1500</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="false" jndi-name="java:jboss/xlinedtaxecm_batch" pool-name="java:jboss/xlinedtaxecm_batch" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_default</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>100</min-pool-size>
+                            <initial-pool-size>50</initial-pool-size>
+                            <max-pool-size>1000</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="true" jndi-name="java:jboss/xlinedtaxecm_Pac" pool-name="xlinedtaxecm_Pac" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_pac</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>200</min-pool-size>
+                            <initial-pool-size>80</initial-pool-size>
+                            <max-pool-size>1200</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <timeout>
+                            <set-tx-query-timeout>false</set-tx-query-timeout>
+                            <blocking-timeout-millis>0</blocking-timeout-millis>
+                            <idle-timeout-minutes>0</idle-timeout-minutes>
+                            <query-timeout>0</query-timeout>
+                            <use-try-lock>0</use-try-lock>
+                            <allocation-retry>0</allocation-retry>
+                            <allocation-retry-wait-millis>0</allocation-retry-wait-millis>
+                        </timeout>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="false" jndi-name="java:jboss/xlinedtaxecm_batch_Pac" pool-name="java:jboss/xlinedtaxecm_batch_Pac" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_pac</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>100</min-pool-size>
+                            <initial-pool-size>50</initial-pool-size>
+                            <max-pool-size>1000</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="true" jndi-name="java:jboss/xlinedtaxecm_NonPac" pool-name="xlinedtaxecm_NonPac" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_nonpac</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>200</min-pool-size>
+                            <initial-pool-size>80</initial-pool-size>
+                            <max-pool-size>1200</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <timeout>
+                            <set-tx-query-timeout>false</set-tx-query-timeout>
+                            <blocking-timeout-millis>0</blocking-timeout-millis>
+                            <idle-timeout-minutes>0</idle-timeout-minutes>
+                            <query-timeout>0</query-timeout>
+                            <use-try-lock>0</use-try-lock>
+                            <allocation-retry>0</allocation-retry>
+                            <allocation-retry-wait-millis>0</allocation-retry-wait-millis>
+                        </timeout>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="false" jndi-name="java:jboss/xlinedtaxecm_batch_NonPac" pool-name="java:jboss/xlinedtaxecm_batch_NonPac" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_nonpac</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>100</min-pool-size>
+                            <initial-pool-size>50</initial-pool-size>
+                            <max-pool-size>1000</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <datasource jta="true" jndi-name="java:jboss/xlinedtaxecm_Dev004" pool-name="xlinedtaxecm_Dev004" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_dev004</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker"/>
+                            <background-validation>true</background-validation>
+                        </validation>
+                    </datasource>
+                    <datasource jta="false" jndi-name="java:jboss/xlinedtaxecm_batch_Dev004" pool-name="java:jboss/xlinedtaxecm_batch_Dev004" enabled="true" use-ccm="false">
+                        <connection-url>jdbc:sqlserver://vntiws03:1433;DatabaseName=_xlinedta_xecm_5star13_dev004</connection-url>
+                        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        <driver>sqlserver</driver>
+                        <pool>
+                            <min-pool-size>100</min-pool-size>
+                            <initial-pool-size>50</initial-pool-size>
+                            <max-pool-size>1000</max-pool-size>
+                        </pool>
+                        <security>
+                            <user-name>sa</user-name>
+                            <password>sa</password>
+                        </security>
+                        <validation>
+                            <validate-on-match>false</validate-on-match>
+                            <background-validation>false</background-validation>
+                        </validation>
+                        <statement>
+                            <share-prepared-statements>false</share-prepared-statements>
+                        </statement>
+                    </datasource>
+                    <drivers>
+                        <driver name="h2" module="com.h2database.h2">
+                            <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
+                        </driver>
+                        <driver name="mysql" module="com.mysql.jdbc">
+                            <driver-class>com.mysql.jdbc.Driver</driver-class>
+                        </driver>
+                        <driver name="sqlserver" module="com.microsoft.sqlserver.jdbc">
+                            <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                        </driver>
+                        <driver name="as400" module="com.ibm.as400">
+                            <driver-class>com.ibm.as400.access.AS400JDBCDriver</driver-class>
+                        </driver>
+                        <driver name="oracle" module="com.oracle.jdbc">
+                            <driver-class>oracle.jdbc.OracleDriver</driver-class>
+                        </driver>
+                    </drivers>
+                </datasources>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:discovery:1.0"/>
+            <subsystem xmlns="urn:jboss:domain:ee:4.0">
+                <spec-descriptor-property-replacement>false</spec-descriptor-property-replacement>
+                <concurrent>
+                    <context-services>
+                        <context-service name="default" jndi-name="java:jboss/ee/concurrency/context/default" use-transaction-setup-provider="true"/>
+                    </context-services>
+                    <managed-thread-factories>
+                        <managed-thread-factory name="default" jndi-name="java:jboss/ee/concurrency/factory/default" context-service="default"/>
+                    </managed-thread-factories>
+                    <managed-executor-services>
+                        <managed-executor-service name="default" jndi-name="java:jboss/ee/concurrency/executor/default" context-service="default" hung-task-threshold="60000" keepalive-time="5000"/>
+                    </managed-executor-services>
+                    <managed-scheduled-executor-services>
+                        <managed-scheduled-executor-service name="default" jndi-name="java:jboss/ee/concurrency/scheduler/default" context-service="default" hung-task-threshold="60000" keepalive-time="3000"/>
+                    </managed-scheduled-executor-services>
+                </concurrent>
+                <default-bindings context-service="java:jboss/ee/concurrency/context/default" datasource="java:jboss/datasources/ExampleDS" jms-connection-factory="java:jboss/DefaultJMSConnectionFactory" managed-executor-service="java:jboss/ee/concurrency/executor/default" managed-scheduled-executor-service="java:jboss/ee/concurrency/scheduler/default" managed-thread-factory="java:jboss/ee/concurrency/factory/default"/>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:ee-security:1.0"/>
+            <subsystem xmlns="urn:jboss:domain:ejb3:5.0">
+                <session-bean>
+                    <stateless>
+                        <bean-instance-pool-ref pool-name="slsb-strict-max-pool"/>
+                    </stateless>
+                    <stateful default-access-timeout="5000" cache-ref="distributable" passivation-disabled-cache-ref="simple"/>
+                    <singleton default-access-timeout="5000"/>
+                </session-bean>
+                <mdb>
+                    <resource-adapter-ref resource-adapter-name="${ejb.resource-adapter-name:activemq-ra.rar}"/>
+                    <bean-instance-pool-ref pool-name="mdb-strict-max-pool"/>
+                </mdb>
+                <pools>
+                    <bean-instance-pools>
+                        <strict-max-pool name="slsb-strict-max-pool" derive-size="from-worker-pools" instance-acquisition-timeout="5" instance-acquisition-timeout-unit="MINUTES"/>
+                        <strict-max-pool name="mdb-strict-max-pool" derive-size="from-cpu-count" instance-acquisition-timeout="5" instance-acquisition-timeout-unit="MINUTES"/>
+                    </bean-instance-pools>
+                </pools>
+                <caches>
+                    <cache name="simple"/>
+                    <cache name="distributable" passivation-store-ref="infinispan" aliases="passivating clustered"/>
+                </caches>
+                <passivation-stores>
+                    <passivation-store name="infinispan" cache-container="ejb" max-size="10000"/>
+                </passivation-stores>
+                <async thread-pool-name="default"/>
+                <timer-service thread-pool-name="default" default-data-store="default-file-store">
+                    <data-stores>
+                        <file-data-store name="default-file-store" path="timer-service-data" relative-to="jboss.server.data.dir"/>
+                    </data-stores>
+                </timer-service>
+                <remote connector-ref="http-remoting-connector" thread-pool-name="default"/>
+                <thread-pools>
+                    <thread-pool name="default">
+                        <max-threads count="10"/>
+                        <keepalive-time time="100" unit="milliseconds"/>
+                    </thread-pool>
+                </thread-pools>
+                <iiop enable-by-default="false" use-qualified-name="false"/>
+                <default-security-domain value="other"/>
+                <default-missing-method-permissions-deny-access value="true"/>
+                <log-system-exceptions value="true"/>
+            </subsystem>
+            <subsystem xmlns="urn:wildfly:elytron:7.0" final-providers="combined-providers" disallowed-providers="OracleUcrypto">
+                <providers>
+                    <aggregate-providers name="combined-providers">
+                        <providers name="elytron"/>
+                        <providers name="openssl"/>
+                    </aggregate-providers>
+                    <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
+                    <provider-loader name="openssl" module="org.wildfly.openssl"/>
+                </providers>
+                <audit-logging>
+                    <file-audit-log name="local-audit" path="audit.log" relative-to="jboss.server.log.dir" format="JSON"/>
+                </audit-logging>
+                <security-domains>
+                    <security-domain name="ApplicationDomain" default-realm="ApplicationRealm" permission-mapper="default-permission-mapper">
+                        <realm name="ApplicationRealm" role-decoder="groups-to-roles"/>
+                    </security-domain>
+                </security-domains>
+                <security-realms>
+                    <identity-realm name="local" identity="$local"/>
+                    <properties-realm name="ApplicationRealm">
+                        <users-properties path="application-users.properties" relative-to="jboss.domain.config.dir" digest-realm-name="ApplicationRealm"/>
+                        <groups-properties path="application-roles.properties" relative-to="jboss.domain.config.dir"/>
+                    </properties-realm>
+                </security-realms>
+                <mappers>
+                    <simple-permission-mapper name="default-permission-mapper" mapping-mode="first">
+                        <permission-mapping>
+                            <principal name="anonymous"/>
+                            <permission-set name="default-permissions"/>
+                        </permission-mapping>
+                        <permission-mapping match-all="true">
+                            <permission-set name="login-permission"/>
+                            <permission-set name="default-permissions"/>
+                        </permission-mapping>
+                    </simple-permission-mapper>
+                    <constant-realm-mapper name="local" realm-name="local"/>
+                    <simple-role-decoder name="groups-to-roles" attribute="groups"/>
+                    <constant-role-mapper name="super-user-mapper">
+                        <role name="SuperUser"/>
+                    </constant-role-mapper>
+                </mappers>
+                <permission-sets>
+                    <permission-set name="login-permission">
+                        <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
+                    </permission-set>
+                    <permission-set name="default-permissions">
+                        <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
+                        <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
+                        <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
+                    </permission-set>
+                </permission-sets>
+                <http>
+                    <http-authentication-factory name="application-http-authentication" security-domain="ApplicationDomain" http-server-mechanism-factory="global">
+                        <mechanism-configuration>
+                            <mechanism mechanism-name="BASIC">
+                                <mechanism-realm realm-name="Application Realm"/>
+                            </mechanism>
+                            <mechanism mechanism-name="FORM"/>
+                        </mechanism-configuration>
+                    </http-authentication-factory>
+                    <provider-http-server-mechanism-factory name="global"/>
+                </http>
+                <sasl>
+                    <sasl-authentication-factory name="application-sasl-authentication" sasl-server-factory="configured" security-domain="ApplicationDomain">
+                        <mechanism-configuration>
+                            <mechanism mechanism-name="JBOSS-LOCAL-USER" realm-mapper="local"/>
+                            <mechanism mechanism-name="DIGEST-MD5">
+                                <mechanism-realm realm-name="ApplicationRealm"/>
+                            </mechanism>
+                        </mechanism-configuration>
+                    </sasl-authentication-factory>
+                    <configurable-sasl-server-factory name="configured" sasl-server-factory="elytron">
+                        <properties>
+                            <property name="wildfly.sasl.local-user.default-user" value="$local"/>
+                        </properties>
+                    </configurable-sasl-server-factory>
+                    <mechanism-provider-filtering-sasl-server-factory name="elytron" sasl-server-factory="global">
+                        <filters>
+                            <filter provider-name="WildFlyElytron"/>
+                        </filters>
+                    </mechanism-provider-filtering-sasl-server-factory>
+                    <provider-sasl-server-factory name="global"/>
+                </sasl>
+                <tls>
+                    <key-stores>
+                        <key-store name="localhostKeystore">
+                            <credential-reference clear-text="changeit"/>
+                            <implementation type="JKS"/>
+                            <file path="localhost.keystore" relative-to="jboss.domain.config.dir"/>
+                        </key-store>
+                    </key-stores>
+                    <key-managers>
+                        <key-manager name="localhostKeyManager" algorithm="SunX509" key-store="localhostKeystore">
+                            <credential-reference clear-text="changeit"/>
+                        </key-manager>
+                    </key-managers>
+                    <server-ssl-contexts>
+                        <server-ssl-context name="localhostSslContext" protocols="TLSv1.2" key-manager="localhostKeyManager"/>
+                    </server-ssl-contexts>
+                </tls>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:iiop-openjdk:2.1">
+                <orb socket-binding="iiop" ssl-socket-binding="iiop-ssl"/>
+                <initializers security="identity" transactions="spec"/>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:infinispan:8.0">
+                <cache-container name="server" aliases="singleton cluster" default-cache="default" module="org.wildfly.clustering.server">
+                    <transport lock-timeout="60000"/>
+                    <replicated-cache name="default">
+                        <transaction mode="BATCH"/>
+                    </replicated-cache>
+                </cache-container>
+                <cache-container name="web" default-cache="dist" module="org.wildfly.clustering.web.infinispan">
+                    <transport lock-timeout="60000"/>
+                    <distributed-cache name="dist" l1-lifespan="0" owners="2">
+                        <locking isolation="REPEATABLE_READ"/>
+                        <transaction mode="BATCH"/>
+                        <file-store/>
+                    </distributed-cache>
+                    <distributed-cache name="concurrent" l1-lifespan="0" owners="2">
+                        <file-store/>
+                    </distributed-cache>
+                </cache-container>
+                <cache-container name="ejb" aliases="sfsb" default-cache="dist" module="org.wildfly.clustering.ejb.infinispan">
+                    <transport lock-timeout="60000"/>
+                    <distributed-cache name="dist" l1-lifespan="0" owners="2">
+                        <locking isolation="REPEATABLE_READ"/>
+                        <transaction mode="BATCH"/>
+                        <file-store/>
+                    </distributed-cache>
+                </cache-container>
+                <cache-container name="hibernate" default-cache="local-query" module="org.infinispan.hibernate-cache">
+                    <transport lock-timeout="60000"/>
+                    <local-cache name="local-query">
+                        <object-memory size="10000"/>
+                        <expiration max-idle="100000"/>
+                    </local-cache>
+                    <invalidation-cache name="entity">
+                        <transaction mode="NON_XA"/>
+                        <object-memory size="10000"/>
+                        <expiration max-idle="100000"/>
+                    </invalidation-cache>
+                    <replicated-cache name="timestamps"/>
+                </cache-container>
+                <cache-container name="xpertline">
+                    <local-cache name="ch.xpertline.data">
+                        <transaction mode="NONE"/>
+                    </local-cache>
+                    <local-cache name="ch.xpertline.xecm.service.FolderServices.FolderTree">
+                        <transaction mode="NONE"/>
+                        <expiration interval="300" lifespan="60000"/>
+                    </local-cache>
+                </cache-container>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:io:3.0">
+                <worker name="default"/>
+                <buffer-pool name="default"/>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:jaxrs:1.0"/>
+            <subsystem xmlns="urn:jboss:domain:jca:5.0">
+                <archive-validation enabled="true" fail-on-error="true" fail-on-warn="false"/>
+                <bean-validation enabled="true"/>
+                <default-workmanager>
+                    <short-running-threads>
+                        <core-threads count="50"/>
+                        <queue-length count="50"/>
+                        <max-threads count="50"/>
+                        <keepalive-time time="10" unit="seconds"/>
+                    </short-running-threads>
+                    <long-running-threads>
+                        <core-threads count="50"/>
+                        <queue-length count="50"/>
+                        <max-threads count="50"/>
+                        <keepalive-time time="10" unit="seconds"/>
+                    </long-running-threads>
+                </default-workmanager>
+                <cached-connection-manager/>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:jdr:1.0"/>
+            <subsystem xmlns="urn:jboss:domain:jgroups:7.0">
+                <channels default="ee">
+                    <channel name="ee" stack="udp"/>
+                </channels>
+                <stacks>
+                    <stack name="udp">
+                        <transport type="UDP" socket-binding="jgroups-udp">
+                            <property name="port_range">
+                                50
+                            </property>
+                        </transport>
+                        <protocol type="PING" module="org.jgroups"/>
+                        <protocol type="MERGE3" module="org.jgroups"/>
+                        <socket-protocol type="FD_SOCK" module="org.jgroups" socket-binding="jgroups-udp-fd"/>
+                        <protocol type="FD_ALL" module="org.jgroups"/>
+                        <protocol type="VERIFY_SUSPECT" module="org.jgroups"/>
+                        <protocol type="pbcast.NAKACK2" module="org.jgroups"/>
+                        <protocol type="UNICAST3" module="org.jgroups"/>
+                        <protocol type="pbcast.STABLE" module="org.jgroups"/>
+                        <protocol type="pbcast.GMS" module="org.jgroups"/>
+                        <protocol type="UFC" module="org.jgroups"/>
+                        <protocol type="MFC" module="org.jgroups"/>
+                        <protocol type="FRAG3"/>
+                    </stack>
+                    <stack name="tcp">
+                        <transport type="TCP" socket-binding="jgroups-tcp">
+                            <property name="port_range">
+                                50
+                            </property>
+                        </transport>
+                        <socket-protocol type="MPING" module="org.jgroups" socket-binding="jgroups-mping"/>
+                        <protocol type="MERGE3" module="org.jgroups"/>
+                        <socket-protocol type="FD_SOCK" module="org.jgroups" socket-binding="jgroups-tcp-fd"/>
+                        <protocol type="FD" module="org.jgroups"/>
+                        <protocol type="VERIFY_SUSPECT" module="org.jgroups"/>
+                        <protocol type="pbcast.NAKACK2" module="org.jgroups"/>
+                        <protocol type="UNICAST3" module="org.jgroups"/>
+                        <protocol type="pbcast.STABLE" module="org.jgroups"/>
+                        <protocol type="pbcast.GMS" module="org.jgroups"/>
+                        <protocol type="MFC" module="org.jgroups"/>
+                        <protocol type="FRAG3"/>
+                    </stack>
+                </stacks>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:jmx:1.3">
+                <expose-resolved-model/>
+                <expose-expression-model/>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:jpa:1.1">
+                <jpa default-datasource="" default-extended-persistence-inheritance="DEEP"/>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:jsf:1.1"/>
+            <subsystem xmlns="urn:jboss:domain:jsr77:1.0"/>
+            <subsystem xmlns="urn:jboss:domain:mail:3.0">
+                <mail-session name="default" jndi-name="java:jboss/mail/Default">
+                    <smtp-server outbound-socket-binding-ref="mail-smtp"/>
+                </mail-session>
+                <mail-session name="xecm" jndi-name="java:/mail/xECMSession">
+                    <smtp-server outbound-socket-binding-ref="mail-smtp"/>
+                </mail-session>
+                <mail-session name="xcwf" jndi-name="java:/mail/xCWFSession">
+                    <smtp-server outbound-socket-binding-ref="mail-smtp"/>
+                </mail-session>
+                <mail-session name="xdsb" jndi-name="java:/mail/xdsbSession">
+                    <smtp-server outbound-socket-binding-ref="mail-smtp"/>
+                </mail-session>
+                <mail-session name="xFrameworkEvent" jndi-name="java:/mail/xFrameworkEventSession">
+                    <smtp-server outbound-socket-binding-ref="mail-smtp"/>
+                </mail-session>
+                <mail-session name="xFrameworkSaas" jndi-name="java:/mail/xFrameworkSaasSession">
+                    <smtp-server outbound-socket-binding-ref="mail-smtp"/>
+                </mail-session>
+                <mail-session name="xFrameworkEbill" jndi-name="java:/mail/xFrameworkEbillSession">
+                    <smtp-server outbound-socket-binding-ref="mail-smtp"/>
+                </mail-session>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:messaging-activemq:7.0">
+                <server name="default">
+                    <cluster password="${jboss.messaging.cluster.password:xl4Jee@ChangeIt1}"/>
+                    <security-setting name="#">
+                        <role name="FrameworkEvent" send="true" consume="true" create-non-durable-queue="true" delete-non-durable-queue="true"/>
+                        <role name="guest" send="true" consume="true" create-non-durable-queue="true" delete-non-durable-queue="true"/>
+                    </security-setting>
+                    <address-setting name="#" dead-letter-address="jms.queue.DLQ" expiry-address="jms.queue.ExpiryQueue" max-size-bytes="10485760" page-size-bytes="2097152" message-counter-history-day-limit="10" redistribution-delay="1000"/>
+                    <address-setting name="jms.queue.FrameworkPrintEventManagedQueue" dead-letter-address="jms.queue.FrameworkPrintEventManagedQueueDLQ" redelivery-delay="60000" max-delivery-attempts="4"/>
+                    <address-setting name="jms.queue.XECMProcessQueue" dead-letter-address="jms.queue.DLQ" expiry-address="jms.queue.ExpiryQueue" max-delivery-attempts="1"/>
+                    <http-connector name="http-connector-activemq" socket-binding="http-activemq" endpoint="http-acceptor-activemq"/>
+                    <http-connector name="http-connector-activemq-throughput" socket-binding="http-activemq-throughput" endpoint="http-acceptor-activemq-throughput">
+                        <param name="batch-delay" value="50"/>
+                    </http-connector>
+                    <in-vm-connector name="in-vm" server-id="0"/>
+                    <http-acceptor name="http-acceptor-activemq" http-listener="http-listener-activemq"/>
+                    <http-acceptor name="http-acceptor-activemq-throughput" http-listener="http-listener-activemq-throughput">
+                        <param name="batch-delay" value="50"/>
+                        <param name="direct-deliver" value="false"/>
+                    </http-acceptor>
+                    <in-vm-acceptor name="in-vm" server-id="0"/>
+                    <jms-queue name="ExpiryQueue" entries="java:/jms/queue/ExpiryQueue"/>
+                    <jms-queue name="DLQ" entries="java:/jms/queue/DLQ"/>
+                    <jms-queue name="FrameworkEventLogIvyQueue" entries="jms/FrameworkEventLogIvyQueue java:jboss/exported/jms/FrameworkEventLogIvyQueue" durable="true"/>
+                    <jms-queue name="FrameworkEventLogJEEQueue" entries="jms/FrameworkEventLogJEEQueue java:jboss/exported/jms/FrameworkEventLogJEEQueue" durable="true"/>
+                    <jms-queue name="FrameworkEventEngineQueue" entries="jms/FrameworkEventEngineQueue java:jboss/exported/jms/FrameworkEventEngineQueue" durable="true"/>
+                    <jms-queue name="FrameworkEventEngineReplyQueue" entries="jms/FrameworkEventEngineReplyQueue java:jboss/exported/jms/FrameworkEventEngineReplyQueue" durable="true"/>
+                    <jms-queue name="XEVTProcessQueue" entries="jms/XEVTProcessQueue java:jboss/exported/jms/XEVTProcessQueue" durable="true"/>
+                    <jms-queue name="XEVTSecurityObjectDataProcessQueue" entries="jms/XEVTSecurityObjectDataProcessQueue java:jboss/exported/jms/XEVTSecurityObjectDataProcessQueue" durable="true"/>
+                    <jms-queue name="XOSTProcessQueue" entries="jms/XOSTProcessQueue java:jboss/exported/jms/XOSTProcessQueue" durable="true"/>
+                    <jms-queue name="XOSTThumbnailProcessQueue" entries="jms/XOSTThumbnailProcessQueue java:jboss/exported/jms/XOSTThumbnailProcessQueue" durable="true"/>
+                    <jms-queue name="XOSTFullTextProcessQueue" entries="jms/XOSTFullTextProcessQueue java:jboss/exported/jms/XOSTFullTextProcessQueue" durable="true"/>
+                    <jms-queue name="XOSTIndexProcessQueue" entries="jms/XOSTIndexProcessQueue java:jboss/exported/jms/XOSTIndexProcessQueue" durable="true"/>
+                    <jms-queue name="XOSTIndexMassProcessQueue" entries="jms/XOSTIndexMassProcessQueue java:jboss/exported/jms/XOSTIndexMassProcessQueue" durable="true"/>
+                    <jms-queue name="XOSTIndexFullTextProcessQueue" entries="jms/XOSTIndexFullTextProcessQueue java:jboss/exported/jms/XOSTIndexFullTextProcessQueue" durable="true"/>
+                    <jms-queue name="XOSTIndexEventProcessQueue" entries="jms/XOSTIndexEventProcessQueue java:jboss/exported/jms/XOSTIndexEventProcessQueue" durable="true"/>
+                    <jms-queue name="XECMProcessQueue" entries="java:/jms/XECMProcessQueue java:jboss/exported/jms/XECMProcessQueue" durable="true"/>
+                    <jms-queue name="XECMReplyXOSTProcessQueue" entries="java:/jms/XECMReplyXOSTProcessQueue java:jboss/exported/jms/XECMReplyXOSTProcessQueue" durable="true"/>
+                    <jms-queue name="XECMBatchIndexProcessQueue" entries="jms/XECMBatchIndexProcessQueue java:jboss/exported/jms/XECMBatchIndexProcessQueue" durable="true"/>
+                    <jms-queue name="XECMEventMonitoringQueue" entries="jms/XECMEventMonitoringQueue java:jboss/exported/jms/XECMEventMonitoringQueue" durable="true"/>
+                    <jms-queue name="XECMReplyXOSTIndexQueue" entries="jms/XECMReplyXOSTIndexQueue java:jboss/exported/jms/XECMReplyXOSTIndexQueue" durable="true"/>
+                    <jms-queue name="FrameworkPrintProcessQueue" entries="jms/FrameworkPrintProcessQueue java:jboss/exported/jms/FrameworkPrintProcessQueue" durable="true"/>
+                    <jms-queue name="FrameworkPrintDocumentQueue" entries="jms/FrameworkPrintDocumentQueue java:jboss/exported/jms/FrameworkPrintDocumentQueue" durable="true"/>
+                    <jms-queue name="FrameworkPrintPrinterQueue" entries="java:/jms/FrameworkPrintPrinterQueue java:jboss/exported/jms/FrameworkPrintPrinterQueue"/>
+                    <jms-queue name="FrameworkPrintEmailQueue" entries="java:/jms/FrameworkPrintEmailQueue java:jboss/exported/jms/FrameworkPrintEmailQueue"/>
+                    <jms-queue name="FrameworkPrintArchiveQueue" entries="java:/jms/FrameworkPrintArchiveQueue java:jboss/exported/jms/FrameworkPrintArchiveQueue"/>
+                    <jms-queue name="FrameworkPrintReplyQueue" entries="java:/jms/FrameworkPrintReplyQueue java:jboss/exported/jms/FrameworkPrintReplyQueue"/>
+                    <jms-queue name="FrameworkPrintEventManagedQueue" entries="jms/FrameworkPrintEventManagedQueue java:jboss/exported/jms/FrameworkPrintEventManagedQueue"/>
+                    <jms-queue name="FrameworkPrintEventManagedQueueDLQ" entries="jms/FrameworkPrintEventManagedQueueDLQ java:jboss/exported/jms/FrameworkPrintEventManagedQueueDLQ"/>
+                    <jms-queue name="TowersBatchRequestQueue" entries="jms/TowersBatchRequestQueue java:jboss/exported/jms/TowersBatchRequestQueue" durable="true"/>
+                    <jms-queue name="XMEEIndexingAllQueue" entries="java:/jms/XMEEIndexingAllQueue java:jboss/exported/jms/XMEEIndexingAllQueue" durable="true"/>
+                    <jms-topic name="FrameworkEventLogJEETopic" entries="jms/FrameworkEventLogJEETopic java:jboss/exported/jms/FrameworkEventLogJEETopic"/>
+                    <connection-factory name="InVmConnectionFactory" entries="java:/ConnectionFactory" connectors="in-vm" thread-pool-max-size="128"/>
+                    <connection-factory name="RemoteConnectionFactory" entries="java:jboss/exported/jms/RemoteConnectionFactory" connectors="http-connector-activemq" ha="true" block-on-acknowledge="true" reconnect-attempts="-1"/>
+                    <connection-factory name="FrameworkEventLogIvyConnectionFactory" entries="java:/jms/FrameworkEventLogIvyConnectionFactory java:jboss/exported/jms/FrameworkEventLogIvyConnectionFactory" connectors="in-vm"/>
+                    <connection-factory name="FrameworkEventLogIvyConnectionFactoryRemote" entries="java:/jms/FrameworkEventLogIvyConnectionFactoryRemote java:jboss/exported/jms/FrameworkEventLogIvyConnectionFactoryRemote" connectors="http-connector-activemq"/>
+                    <connection-factory name="FrameworkEventLogJEEConnectionFactory" entries="java:/jms/FrameworkEventLogJEEConnectionFactory java:jboss/exported/jms/FrameworkEventLogJEEConnectionFactory" connectors="in-vm"/>
+                    <connection-factory name="XOSTIndexProcessConnectionFactoryRemote" entries="java:/jms/XOSTIndexProcessConnectionFactoryRemote java:jboss/exported/jms/XOSTIndexProcessConnectionFactoryRemote" connectors="http-connector-activemq" ha="true" block-on-acknowledge="true" reconnect-attempts="-1"/>
+                    <connection-factory name="XOSTIndexEventProcessConnectionFactoryRemote" entries="java:/jms/XOSTIndexEventProcessConnectionFactoryRemote java:jboss/exported/jms/XOSTIndexEventProcessConnectionFactoryRemote" connectors="http-connector-activemq" ha="true" block-on-acknowledge="true" reconnect-attempts="-1"/>
+                    <connection-factory name="XECMProcessConnectionFactory" entries="java:/jms/XECMProcessConnectionFactory java:jboss/exported/jms/XECMProcessConnectionFactory" connectors="in-vm"/>
+                    <connection-factory name="XECMProcessConnectionFactoryRemote" entries="java:/jms/XECMProcessConnectionFactoryRemote java:jboss/exported/jms/XECMProcessConnectionFactoryRemote" connectors="http-connector-activemq" ha="true" block-on-acknowledge="true" reconnect-attempts="-1"/>
+                    <pooled-connection-factory name="XEVTProcessConnectionFactory" entries="java:/jms/XEVTProcessConnectionFactory java:jboss/exported/jms/XEVTProcessConnectionFactory" connectors="in-vm" compress-large-messages="true" max-pool-size="100"/>
+                    <pooled-connection-factory name="XOSTProcessConnectionFactory" entries="java:/jms/XOSTProcessConnectionFactory java:jboss/exported/jms/XOSTProcessConnectionFactory" connectors="in-vm" max-pool-size="100"/>
+                    <pooled-connection-factory name="XOSTThumbnailProcessConnectionFactory" entries="java:/jms/XOSTThumbnailProcessConnectionFactory java:jboss/exported/jms/XOSTThumbnailProcessConnectionFactory" connectors="in-vm" max-pool-size="30"/>
+                    <pooled-connection-factory name="XOSTIndexProcessConnectionFactory" entries="java:/jms/XOSTIndexProcessConnectionFactory java:jboss/exported/jms/XOSTIndexProcessConnectionFactory" connectors="in-vm" max-pool-size="100"/>
+                    <pooled-connection-factory name="XECMBatchIndexProcessConnectionFactory" entries="java:/jms/XECMBatchIndexProcessConnectionFactory java:jboss/exported/jms/XECMBatchIndexProcessConnectionFactory" connectors="in-vm" max-pool-size="100"/>
+                    <pooled-connection-factory name="activemq-ra" entries="java:/JmsXA java:jboss/DefaultJMSConnectionFactory" connectors="in-vm" scheduled-thread-pool-max-size="10" transaction="xa" max-pool-size="300"/>
+                </server>
+            </subsystem>
+            <subsystem xmlns="urn:wildfly:microprofile-config-smallrye:1.0"/>
+            <subsystem xmlns="urn:wildfly:microprofile-opentracing-smallrye:1.0"/>
+            <subsystem xmlns="urn:jboss:domain:modcluster:5.0">
+                <proxy name="default" advertise-socket="modcluster" listener="ajp">
+                    <dynamic-load-provider>
+                        <load-metric type="cpu"/>
+                    </dynamic-load-provider>
+                </proxy>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:naming:2.0">
+                <remote-naming/>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:pojo:1.0"/>
+            <subsystem xmlns="urn:jboss:domain:remoting:4.0">
+                <http-connector name="http-remoting-connector" connector-ref="default" security-realm="ApplicationRealm"/>
+                <http-connector name="http-remoting-connector-activemq" connector-ref="http-listener-activemq" security-realm="ApplicationRealm"/>
+                <http-connector name="http-remoting-connector-activemq-throughput" connector-ref="http-listener-activemq-throughput" security-realm="ApplicationRealm"/>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:request-controller:1.0"/>
+            <subsystem xmlns="urn:jboss:domain:resource-adapters:5.0"/>
+            <subsystem xmlns="urn:jboss:domain:sar:1.0"/>
+            <subsystem xmlns="urn:jboss:domain:security:2.0">
+                <security-domains>
+                    <security-domain name="other" cache-type="default">
+                        <authentication>
+                            <login-module code="Remoting" flag="optional">
+                                <module-option name="password-stacking" value="useFirstPass"/>
+                            </login-module>
+                            <login-module code="RealmDirect" flag="required">
+                                <module-option name="password-stacking" value="useFirstPass"/>
+                            </login-module>
+                        </authentication>
+                    </security-domain>
+                    <security-domain name="jboss-web-policy" cache-type="default">
+                        <authorization>
+                            <policy-module code="Delegating" flag="required"/>
+                        </authorization>
+                    </security-domain>
+                    <security-domain name="jboss-ejb-policy" cache-type="default">
+                        <authorization>
+                            <policy-module code="Delegating" flag="required"/>
+                        </authorization>
+                    </security-domain>
+                    <security-domain name="jaspitest" cache-type="default">
+                        <authentication-jaspi>
+                            <login-module-stack name="dummy">
+                                <login-module code="Dummy" flag="optional"/>
+                            </login-module-stack>
+                            <auth-module code="Dummy"/>
+                        </authentication-jaspi>
+                    </security-domain>
+                    <security-domain name="XpertLineSecurityDomain" cache-type="default">
+                        <authentication>
+                            <login-module code="LdapExtended" flag="required">
+                                <module-option name="java.naming.factory.initial" value="com.sun.jndi.ldap.LdapCtxFactory"/>
+                                <module-option name="java.naming.provider.url" value="ldap://192.168.73.34:50392"/>
+                                <module-option name="java.naming.security.authentication" value="simple"/>
+                                <module-option name="bindDN" value="CN=Admin,OU=SAAS,DC=XpertLineDev,DC=local"/>
+                                <module-option name="bindCredential" value="changeIt1"/>
+                                <module-option name="baseCtxDN" value="DC=XpertLineDev,DC=local"/>
+                                <module-option name="baseFilter" value="(userPrincipalName={0})"/>
+                                <module-option name="rolesCtxDN" value="CN=Roles,DC=XpertLineDev,DC=local"/>
+                                <module-option name="roleFilter" value="(cn={0})"/>
+                                <module-option name="roleNameAttributeID" value="cn"/>
+                                <module-option name="roleAttributeIsDN" value="true"/>
+                                <module-option name="roleRecursion" value="0"/>
+                                <module-option name="searchScope" value="SUBTREE_SCOPE"/>
+                                <module-option name="searchTimeLimit" value="10000"/>
+                                <module-option name="allowEmptyPasswords" value="false"/>
+                                <module-option name="throwValidateError" value="true"/>
+                            </login-module>
+                        </authentication>
+                    </security-domain>
+                    <security-domain name="XpertLineServiceSecurityDomain" cache-type="default">
+                        <authentication>
+                            <login-module code="LdapExtended" flag="required">
+                                <module-option name="java.naming.factory.initial" value="com.sun.jndi.ldap.LdapCtxFactory"/>
+                                <module-option name="java.naming.provider.url" value="ldap://192.168.73.34:50392"/>
+                                <module-option name="java.naming.security.authentication" value="simple"/>
+                                <module-option name="bindDN" value="CN=Admin,OU=SAAS,DC=XpertLineDev,DC=local"/>
+                                <module-option name="bindCredential" value="changeIt1"/>
+                                <module-option name="baseCtxDN" value="OU=SAAS,DC=XpertLineDev,DC=local"/>
+                                <module-option name="baseFilter" value="(&amp;(userPrincipalName={0})(memberOf=CN=All Service Users,CN=Roles,DC=XpertLineDev,DC=local))"/>
+                                <module-option name="rolesCtxDN" value="CN=Roles,DC=XpertLineDev,DC=local"/>
+                                <module-option name="roleFilter" value="(cn={0})"/>
+                                <module-option name="roleNameAttributeID" value="cn"/>
+                                <module-option name="roleAttributeIsDN" value="true"/>
+                                <module-option name="roleRecursion" value="0"/>
+                                <module-option name="searchScope" value="SUBTREE_SCOPE"/>
+                                <module-option name="searchTimeLimit" value="10000"/>
+                                <module-option name="allowEmptyPasswords" value="false"/>
+                                <module-option name="throwValidateError" value="true"/>
+                            </login-module>
+                        </authentication>
+                    </security-domain>
+                    <security-domain name="XpertLineSecurityDomainSSO" cache-type="default">
+                        <authentication>
+                            <login-module code="SPNEGO" flag="required">
+                                <module-option name="password-stacking" value="useFirstPass"/>
+                                <module-option name="serverSecurityDomain" value="host"/>
+                                <module-option name="removeRealmFromPrincipal" value="false"/>
+                                <module-option name="usernamePasswordDomain" value="XpertLineSecurityDomain"/>
+                            </login-module>
+                        </authentication>
+                    </security-domain>
+                    <security-domain name="host" cache-type="default">
+                        <authentication>
+                            <login-module code="Kerberos" flag="required">
+                                <module-option name="debug" value="true"/>
+                                <module-option name="storeKey" value="true"/>
+                                <module-option name="useTicketCache" value="false"/>
+                                <module-option name="refreshKrb5Config" value="true"/>
+                                <module-option name="useKeyTab" value="true"/>
+                                <module-option name="doNotPrompt" value="true"/>
+                                <module-option name="keyTab" value="${jboss.domain.config.dir}/xline-sso-user.http.myserver.keytab"/>
+                                <module-option name="principal" value="HTTP/myserver.groupe-t2i.local@GROUPE-T2I.LOCAL"/>
+                            </login-module>
+                        </authentication>
+                    </security-domain>
+                </security-domains>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:security-manager:1.0">
+                <deployment-permissions>
+                    <maximum-set>
+                        <permission class="java.security.AllPermission"/>
+                    </maximum-set>
+                </deployment-permissions>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:singleton:1.0">
+                <singleton-policies default="default">
+                    <singleton-policy name="default" cache-container="server">
+                        <simple-election-policy/>
+                    </singleton-policy>
+                </singleton-policies>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:transactions:5.0">
+                <core-environment>
+                    <process-id>
+                        <uuid/>
+                    </process-id>
+                </core-environment>
+                <recovery-environment socket-binding="txn-recovery-environment" status-socket-binding="txn-status-manager"/>
+                <object-store relative-to="jboss.server.data.dir"/>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:undertow:9.0">
+                <buffer-cache name="default"/>
+                <server name="default-server">
+                    <ajp-listener name="ajp" socket-binding="ajp"/>
+                    <http-listener name="default" socket-binding="http" redirect-socket="https" enable-http2="false"/>
+                    <http-listener name="http-listener-activemq" socket-binding="http-activemq" enable-http2="false"/>
+                    <http-listener name="http-listener-activemq-throughput" socket-binding="http-activemq-throughput" enable-http2="false"/>
+                    <https-listener name="https" socket-binding="https" max-post-size="209715200" disallowed-methods="TRACE" ssl-context="localhostSslContext" enable-http2="false"/>
+                    <host name="default-host" alias="localhost">
+                        <location name="/" handler="welcome-content"/>
+                        <access-log pattern="%h %t ecm-uri=%r status-code=%s bytes-sent=%b time-consuming=%D" use-server-log="true"/>
+                        <filter-ref name="xFrameOptions"/>
+                        <filter-ref name="xContentTypeOptions"/>
+                        <filter-ref name="xXssProtection"/>
+                        <filter-ref name="transport-security"/>
+                        <filter-ref name="gzipFilter" predicate="exists('%{o,Content-Type}') or regex(pattern='(?:application/javascript|text/css|text/html|text/xml|application/json)(;.*)?', value=%{o,Content-Type}, full-match=true)"/>
+                        <filter-ref name="load-balancer"/>
+                        <single-sign-on path="/" http-only="true" secure="true"/>
+                    </host>
+                </server>
+                <servlet-container name="default" default-encoding="UTF-8">
+                    <jsp-config/>
+                    <session-cookie http-only="true" secure="true"/>
+                    <websockets/>
+                </servlet-container>
+                <handlers>
+                    <file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
+                </handlers>
+                <filters>
+                    <response-header name="xFrameOptions" header-name="X-Frame-Options" header-value="SAMEORIGIN"/>
+                    <response-header name="xContentTypeOptions" header-name="X-Content-Type-Options" header-value="nosniff"/>
+                    <response-header name="xXssProtection" header-name="X-XSS-Protection" header-value="1; mode=block"/>
+                    <response-header name="transport-security" header-name="Strict-Transport-Security" header-value="max-age=31536000; includeSubDomains"/>
+                    <gzip name="gzipFilter"/>
+                    <mod-cluster name="load-balancer" management-socket-binding="mcmp-management" advertise-socket-binding="modcluster" enable-http2="true" max-retries="3"/>
+                </filters>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:webservices:2.0">
+                <wsdl-host>${jboss.bind.address:127.0.0.1}</wsdl-host>
+                <endpoint-config name="Standard-Endpoint-Config"/>
+                <endpoint-config name="Recording-Endpoint-Config">
+                    <pre-handler-chain name="recording-handlers" protocol-bindings="##SOAP11_HTTP ##SOAP11_HTTP_MTOM ##SOAP12_HTTP ##SOAP12_HTTP_MTOM">
+                        <handler name="RecordingHandler" class="org.jboss.ws.common.invocation.RecordingServerHandler"/>
+                    </pre-handler-chain>
+                </endpoint-config>
+                <client-config name="Standard-Client-Config"/>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:weld:4.0"/>
+        </profile>
+    </profiles>
+    <interfaces>
+        <interface name="management"/>
+        <interface name="public"/>
+        <interface name="private">
+            <inet-address value="${jboss.bind.address.private:127.0.0.1}"/>
+        </interface>
+        <interface name="unsecure">
+            <inet-address value="${jboss.bind.address.unsecure:127.0.0.1}"/>
+        </interface>
+    </interfaces>
+    <socket-binding-groups>
+        <socket-binding-group name="xdev-full-ha-sockets" default-interface="public">
+            <socket-binding name="ajp" port="${jboss.ajp.port:8009}"/>
+            <socket-binding name="http" port="${jboss.http.port:8080}"/>
+            <socket-binding name="https" port="${jboss.https.port:8443}"/>
+            <socket-binding name="http-activemq" port="8081"/>
+            <socket-binding name="http-activemq-throughput" port="8082"/>
+            <socket-binding name="iiop" interface="unsecure" port="3528"/>
+            <socket-binding name="iiop-ssl" interface="unsecure" port="3529"/>
+            <socket-binding name="jgroups-mping" interface="private" multicast-address="${jboss.default.multicast.address:230.0.0.4}" multicast-port="45700"/>
+            <socket-binding name="jgroups-tcp" interface="private" port="7600"/>
+            <socket-binding name="jgroups-tcp-fd" interface="private" port="57600"/>
+            <socket-binding name="jgroups-udp" interface="private" port="55200" multicast-address="${jboss.default.multicast.address:230.0.0.4}" multicast-port="45688"/>
+            <socket-binding name="jgroups-udp-fd" interface="private" port="54200"/>
+            <socket-binding name="mcmp-management" interface="private" port="${jboss.mcmp.port:8090}"/>
+            <socket-binding name="modcluster" interface="private" multicast-address="${jboss.modcluster.multicast.address:224.0.1.105}" multicast-port="23364"/>
+            <socket-binding name="txn-recovery-environment" port="4712"/>
+            <socket-binding name="txn-status-manager" port="4713"/>
+            <socket-binding name="messaging" port="5445"/>
+            <socket-binding name="messaging-throughput" port="5455"/>
+            <outbound-socket-binding name="mail-smtp">
+                <remote-destination host="mail.aavn.local" port="25"/>
+            </outbound-socket-binding>
+        </socket-binding-group>
+    </socket-binding-groups>
+    <deployments>
+        <deployment name="xframework-event-ear-3.0.3.ear" runtime-name="xframework-event-ear-3.0.3.ear">
+            <content sha1="b4af18f5a02e02acd30360d71a61fdd48e453ad2"/>
+        </deployment>
+        <deployment name="xframework-saas-ear-3.0.3.ear" runtime-name="xframework-saas-ear-3.0.3.ear">
+            <content sha1="09d958f7baa1a21a595d985e883f39b88eac9a18"/>
+        </deployment>
+        <deployment name="xframework-objectstore-ear-3.0.6.ear" runtime-name="xframework-objectstore-ear-3.0.6.ear">
+            <content sha1="f524d3ee83a82dc6b1fe5a53795d762e2ce73867"/>
+        </deployment>
+        <deployment name="xframework-security-ear-3.0.2.ear" runtime-name="xframework-security-ear-3.0.2.ear">
+            <content sha1="0ff3eda37a7ab7413bde47f289f75625606a51ee"/>
+        </deployment>
+        <deployment name="xframework-objectstore-ear-3.0.10-SNAPSHOT.ear" runtime-name="xframework-objectstore-ear-3.0.10-SNAPSHOT.ear">
+            <content sha1="64f376f4a0e3ca26642aa0d6b4067503e7ffe7f4"/>
+        </deployment>
+        <deployment name="xcwf-ear-3.1.1.ear" runtime-name="xcwf-ear-3.1.1.ear">
+            <content sha1="7787a9c51b84cba06541fb2770ea3bf80c8f0a7f"/>
+        </deployment>
+        <deployment name="xecm-ear-3.2.10-SNAPSHOT.ear" runtime-name="xecm-ear-3.2.10-SNAPSHOT.ear">
+            <content sha1="a392fe58e2b6d0c7fe7dd8f52e531bfb6c1d766c"/>
+        </deployment>
+    </deployments>
+    <server-groups>
+        <server-group name="xdev-server-group" profile="xdev-full-ha">
+            <jvm name="default">
+                <heap size="2048m" max-size="2048m"/>
+                <jvm-options>
+                    <option value="-XX:NewRatio=1"/>
+                    <option value="-XX:SurvivorRatio=12"/>
+                </jvm-options>
+            </jvm>
+            <socket-binding-group ref="xdev-full-ha-sockets"/>
+            <deployments>
+                <deployment name="xframework-security-ear-3.0.2.ear" runtime-name="xframework-security-ear-3.0.2.ear"/>
+                <deployment name="xframework-saas-ear-3.0.3.ear" runtime-name="xframework-saas-ear-3.0.3.ear"/>
+                <deployment name="xframework-objectstore-ear-3.0.10-SNAPSHOT.ear" runtime-name="xframework-objectstore-ear-3.0.10-SNAPSHOT.ear"/>
+                <deployment name="xframework-event-ear-3.0.3.ear" runtime-name="xframework-event-ear-3.0.3.ear"/>
+                <deployment name="xcwf-ear-3.1.1.ear" runtime-name="xcwf-ear-3.1.1.ear"/>
+            </deployments>
+        </server-group>
+    </server-groups>
+    <host-excludes>
+        <host-exclude name="WildFly10.0">
+            <host-release id="WildFly10.0"/>
+            <excluded-extensions>
+                <extension module="org.wildfly.extension.clustering.web"/>
+                <extension module="org.wildfly.extension.core-management"/>
+                <extension module="org.wildfly.extension.datasources-agroal"/>
+                <extension module="org.wildfly.extension.discovery"/>
+                <extension module="org.wildfly.extension.ee-security"/>
+                <extension module="org.wildfly.extension.elytron"/>
+                <extension module="org.wildfly.extension.microprofile.config-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.health-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.opentracing-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.metrics-smallrye"/>
+            </excluded-extensions>
+        </host-exclude>
+        <host-exclude name="WildFly10.1">
+            <host-release id="WildFly10.1"/>
+            <excluded-extensions>
+                <extension module="org.wildfly.extension.clustering.web"/>
+                <extension module="org.wildfly.extension.core-management"/>
+                <extension module="org.wildfly.extension.datasources-agroal"/>
+                <extension module="org.wildfly.extension.discovery"/>
+                <extension module="org.wildfly.extension.ee-security"/>
+                <extension module="org.wildfly.extension.elytron"/>
+                <extension module="org.wildfly.extension.microprofile.config-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.health-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.opentracing-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.metrics-smallrye"/>
+            </excluded-extensions>
+        </host-exclude>
+        <host-exclude name="WildFly11.0">
+            <host-release id="WildFly11.0"/>
+            <excluded-extensions>
+                <extension module="org.wildfly.extension.clustering.web"/>
+                <extension module="org.wildfly.extension.datasources-agroal"/>
+                <extension module="org.wildfly.extension.ee-security"/>
+                <extension module="org.wildfly.extension.microprofile.config-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.health-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.opentracing-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.metrics-smallrye"/>
+            </excluded-extensions>
+        </host-exclude>
+        <host-exclude name="WildFly12.0">
+            <host-release id="WildFly12.0"/>
+            <excluded-extensions>
+                <extension module="org.wildfly.extension.clustering.web"/>
+                <extension module="org.wildfly.extension.datasources-agroal"/>
+                <extension module="org.wildfly.extension.ee-security"/>
+                <extension module="org.wildfly.extension.microprofile.config-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.health-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.opentracing-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.metrics-smallrye"/>
+            </excluded-extensions>
+        </host-exclude>
+        <host-exclude name="WildFly13.0">
+            <host-release id="WildFly13.0"/>
+            <excluded-extensions>
+                <extension module="org.wildfly.extension.clustering.web"/>
+                <extension module="org.wildfly.extension.datasources-agroal"/>
+                <extension module="org.wildfly.extension.microprofile.config-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.health-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.opentracing-smallrye"/>
+                <extension module="org.wildfly.extension.microprofile.metrics-smallrye"/>
+            </excluded-extensions>
+        </host-exclude>
+        <host-exclude name="WildFly14.0">
+            <host-release id="WildFly14.0"/>
+            <excluded-extensions>
+                <extension module="org.wildfly.extension.clustering.web"/>
+                <extension module="org.wildfly.extension.microprofile.metrics-smallrye"/>
+            </excluded-extensions>
+        </host-exclude>
+    </host-excludes>
+</domain>

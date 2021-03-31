@@ -1,2 +1,94 @@
 JVM Option: 
   - Select specific configuration:  -Djboss.server.default.config=standalone-bdd.xml
+  
+  
+Logging:
+    <subsystem xmlns="urn:jboss:domain:logging:7.0">
+                <console-handler name="CONSOLE">
+                    <level name="DEBUG"/>
+                    <formatter>
+                        <named-formatter name="COLOR-PATTERN"/>
+                    </formatter>
+                </console-handler>
+                <size-rotating-file-handler name="FILE" autoflush="true">
+                    <level name="DEBUG"/>
+                    <encoding value="UTF-8"/>
+                    <formatter>
+                        <pattern-formatter pattern="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"/>
+                    </formatter>
+                    <file relative-to="jboss.server.log.dir" path="server.log"/>
+                    <rotate-size value="50M"/>
+                    <max-backup-index value="15"/>
+                    <append value="true"/>
+                </size-rotating-file-handler>
+                <logger category="com.arjuna">
+                    <level name="WARN"/>
+                </logger>
+                <logger category="org.jboss.as.config">
+                    <level name="WARN"/>
+                </logger>
+                <logger category="sun.rmi">
+                    <level name="WARN"/>
+                </logger>
+                <logger category="org.eclipse.yasson.internal.ReflectionUtils">
+                    <level name="ERROR"/>
+                </logger>
+                <logger category="ch.xpertline.xecm">
+                    <level name="DEBUG"/>
+                </logger>
+                <logger category="ch.xpertline.xcwf">
+                    <level name="DEBUG"/>
+                </logger>
+                <root-logger>
+                    <level name="INFO"/>
+                    <handlers>
+                        <handler name="CONSOLE"/>
+                        <handler name="FILE"/>
+                    </handlers>
+                </root-logger>
+                <formatter name="PATTERN">
+                    <pattern-formatter pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n"/>
+                </formatter>
+                <formatter name="COLOR-PATTERN">
+                    <pattern-formatter pattern="%K{level}%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n"/>
+                </formatter>
+    </subsystem>
+    
+                <subsystem xmlns="urn:jboss:domain:undertow:9.0">
+                <buffer-cache name="default"/>
+                <server name="default-server">
+                    <ajp-listener name="ajp" socket-binding="ajp"/>
+                    <http-listener name="default" socket-binding="http" redirect-socket="https" enable-http2="false"/>
+                    <http-listener name="http-listener-activemq" socket-binding="http-activemq" enable-http2="false"/>
+                    <http-listener name="http-listener-activemq-throughput" socket-binding="http-activemq-throughput" enable-http2="false"/>
+                    <https-listener name="https" socket-binding="https" max-post-size="209715200" disallowed-methods="TRACE" ssl-context="localhostSslContext" enable-http2="false"/>
+                    <host name="default-host" alias="localhost">
+                        <location name="/" handler="welcome-content"/>
+                        <access-log pattern="%h %t ecm-uri=%r status-code=%s bytes-sent=%b time-consuming=%D" use-server-log="true"/>
+                        <filter-ref name="xFrameOptions"/>
+                        <filter-ref name="xContentTypeOptions"/>
+                        <filter-ref name="xXssProtection"/>
+                        <filter-ref name="transport-security"/>
+                        <filter-ref name="gzipFilter" predicate="exists('%{o,Content-Type}') or regex(pattern='(?:application/javascript|text/css|text/html|text/xml|application/json)(;.*)?', value=%{o,Content-Type}, full-match=true)"/>
+                        <filter-ref name="load-balancer"/>
+                        <single-sign-on path="/" http-only="true" secure="true"/>
+                    </host>
+                </server>
+                <servlet-container name="default" default-encoding="UTF-8">
+                    <jsp-config/>
+                    <session-cookie http-only="true" secure="true"/>
+                    <websockets/>
+                </servlet-container>
+                <handlers>
+                    <file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
+                </handlers>
+                <filters>
+                    <response-header name="xFrameOptions" header-name="X-Frame-Options" header-value="SAMEORIGIN"/>
+                    <response-header name="xContentTypeOptions" header-name="X-Content-Type-Options" header-value="nosniff"/>
+                    <response-header name="xXssProtection" header-name="X-XSS-Protection" header-value="1; mode=block"/>
+                    <response-header name="transport-security" header-name="Strict-Transport-Security" header-value="max-age=31536000; includeSubDomains"/>
+                    <gzip name="gzipFilter"/>
+                    <mod-cluster name="load-balancer" management-socket-binding="mcmp-management" advertise-socket-binding="modcluster" enable-http2="true" max-retries="3"/>
+                </filters>
+    </subsystem>
+    
