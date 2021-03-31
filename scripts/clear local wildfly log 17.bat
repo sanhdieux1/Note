@@ -1,0 +1,1 @@
+powershell.exe Clear-Content C:\Users\pdkhoa\Data\code\t2i\server\wildfly-17.0.1.Final\domain\servers\xdev-server-one\log\server.log

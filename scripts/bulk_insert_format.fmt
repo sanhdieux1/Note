@@ -1,0 +1,12 @@
+12.0
+10
+1        SQLCHAR       0       255        "~"      1       AMAWCD     ""
+2        SQLCHAR       0       255        "~"      2       AMATCD     ""
+3        SQLCHAR       0       255        "~"      3       AMA5ST     ""
+4        SQLCHAR       0       255        "~"      4       AMAMNB     ""
+5        SQLCHAR       0       255        "~"      5       AMANNB     ""
+6        SQLCHAR       0       255        "~"      6       AMAOVN     ""
+7        SQLCHAR       0       255        "~"      7       AMAPVN     ""
+8        SQLCHAR       0       255        "~"      8       AMBANA     ""
+9        SQLCHAR       0       255        "~"      9       AMBBNA     ""
+10       SQLINT        0       255        "\r\n"   10      AMAXNB     ""
